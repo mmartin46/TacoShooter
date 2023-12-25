@@ -8,6 +8,5 @@ public interface Entity {
 	void setX(double x);
 	void setY(double y);
 	
-	void update();
 	void draw(Group group);
 }

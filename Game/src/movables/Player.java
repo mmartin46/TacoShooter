@@ -6,28 +6,20 @@ import java.util.HashMap;
 import java.util.List;
 
 import input.InputManager;
+import interfaces.Direction;
 import interfaces.Entity;
+import interfaces.Movable;
 import javafx.scene.Group;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 
-enum Direction {
-	RIGHT,
-	DOWN,
-	UP,
-	LEFT
-}
 
-public class Player implements Entity {
+public class Player extends Movable implements Entity {
 	
 	// Constants
 	private final int INITIAL_SPRITE = 0;
-	
-	// Player Coordinates
-	private double dx = 0.0;
-	private double dy = 0.0;
-	
+
 	// Player Sprite
 	private int numSprites;
 	private ImageView currentSprite;
@@ -37,9 +29,11 @@ public class Player implements Entity {
 	private Direction currentDirection;
 	private Direction lastDirection;
 	
-	private final double PLAYER_SPEED = 4.0;
+	private final double PLAYER_SPEED = 2.0;
 	
-	
+	public Player() {
+		
+	}
 	
 	public Player(double x, double y, int numSprites) {
 		this.numSprites = numSprites;
@@ -133,11 +127,9 @@ public class Player implements Entity {
 	
 	private void handleHorizontalInput() {
 		if (isKeyPressed(KeyCode.LEFT)) {
-			dx = -PLAYER_SPEED;
-			setCurrentDirection(Direction.LEFT);
+			moveLeft(PLAYER_SPEED);
 		} else if (isKeyPressed(KeyCode.RIGHT)) {
-			dx = PLAYER_SPEED;
-			setCurrentDirection(Direction.RIGHT);
+			moveRight(PLAYER_SPEED);
 		} else {
 			dx = 0.0;
 		}
@@ -145,17 +137,14 @@ public class Player implements Entity {
 	
 	private void handleVerticalInput() {
 		if (isKeyPressed(KeyCode.UP)) {
-			dy = -PLAYER_SPEED;
-			setCurrentDirection(Direction.UP);
+			moveUp(PLAYER_SPEED);
 		} else if (isKeyPressed(KeyCode.DOWN)) {
-			dy = PLAYER_SPEED;
-			setCurrentDirection(Direction.DOWN);
+			moveDown(PLAYER_SPEED);
 		} else {
 			dy = 0.0;
 		}
 	}
 	
-	@Override
 	public void update() {
 		// Checks for keys for player movement.
 		handleInput();
@@ -163,6 +152,7 @@ public class Player implements Entity {
 		// Updates the velocity based on the input.
 		currentSprite.setTranslateX(currentSprite.getTranslateX() + dx);
 		currentSprite.setTranslateY(currentSprite.getTranslateY() + dy);
+		
 		
 		// Changes the current sprite considering
 		// the direction.		
@@ -218,6 +208,10 @@ public class Player implements Entity {
 	// Update the current direction
 	public void setCurrentDirection(Direction currentDirection) {
 		this.currentDirection = currentDirection;
+	}
+	
+	public Direction getCurrentDirection() {
+		return currentDirection;
 	}
 	
 	private void updateToFirstIndex() {

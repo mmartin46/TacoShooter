@@ -52,17 +52,13 @@ public class Main extends Application {
 
 
 	private void update() {
-		
 		game.update();
 		draw();
 	}
 	
 	private void draw() {
-
-		
 		game.draw(gameGroup);
 	}
-
 	
 	public static void main(String[] args) {
 		launch(args);

@@ -127,10 +127,10 @@ public class TileMap {
 					
 					// Turn it into a sprite of its own.
 					ImageView tileImageView = getTileImageView(rowWithinSheet, columnWithinSheet);
-					
+										
 					// Create the Tile instance.
 					TileType tileType = getTileType(tileIndex);
-					Tile tile = new Tile(tileIndex, x * TILE_SIZE, y * TILE_SIZE, tileType, tileImageView);
+					Tile tile = new Tile(tileIndex, y * TILE_SIZE, x * TILE_SIZE, tileType, tileImageView);
 					tileMap[x][y] = tile;
 				}
 			}
@@ -149,13 +149,7 @@ public class TileMap {
 				Tile currentTile = tileMap[x][y];
 				
 
-				
-				
-				// Insert the image within the group of the window.
-				ImageView currentTileSprite = currentTile.getImageView();
-				currentTileSprite.setLayoutX(currentTile.getX());
-				currentTileSprite.setLayoutY(currentTile.getY());
-				group.getChildren().add(currentTileSprite);
+				currentTile.draw(group);
 			}
 		}
 	}
@@ -171,6 +165,8 @@ public class TileMap {
 		ImageView imageView = new ImageView(tileSheet);
 		imageView.setViewport(new Rectangle2D(column * TILE_SIZE, row * TILE_SIZE, 
 								TILE_SIZE, TILE_SIZE));
+		
+		
 		return imageView;
 	}
 	

@@ -62,14 +62,15 @@ public class Tile implements Entity {
 		this.y = y;
 	}
 
-	@Override
 	public void update() {
 		
 	}
 
 	@Override
 	public void draw(Group group) {
-		
+		imageView.setLayoutX(getX());
+		imageView.setLayoutY(getY());
+		group.getChildren().add(imageView);
 	}
 
 }

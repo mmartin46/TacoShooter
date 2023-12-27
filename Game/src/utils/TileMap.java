@@ -170,4 +170,8 @@ public class TileMap {
 		return imageView;
 	}
 	
+	public Tile[][] getTileMap() {
+		return tileMap;
+	}
+	
 }

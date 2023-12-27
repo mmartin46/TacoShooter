@@ -16,10 +16,7 @@ public class Enemy extends Movable implements Entity {
 	// Constants
 	private final int INITIAL_SPRITE = 0;
 	
-	// Player Coordinates
-	private double dx = 0.0;
-	private double dy = 0.0;
-	
+
 	// Player Sprite
 	private int numSprites;
 	private ImageView currentSprite;
@@ -27,13 +24,16 @@ public class Enemy extends Movable implements Entity {
 	
 	// Player Direction
 	private Direction currentDirection;
-	private Direction lastDirection;
 	
-	private final double ENEMY_SPEED = 2.0;
+	private final double ENEMY_SPEED = 0.4;
+
+
+	private Direction lastDirection;
 	
 	public Enemy(int x, int y, int numSprites) {
 		this.numSprites = numSprites;
 		enemyImages = new HashMap<>();
+		initializeEnemy(x, y);
 	}
 	
 	private void initalizePlayerCoordinates(double x, double y) {
@@ -42,25 +42,25 @@ public class Enemy extends Movable implements Entity {
 	}
 	
 	private void initializeEnemy(double x, double y) {
-		initalizeAllSprites();
-		
+		initializeDirections();
+		initializeAllSprites();
+
+		currentDirection = Direction.RIGHT;
 		currentSprite = new ImageView(enemyImages.get(currentDirection).get(INITIAL_SPRITE));
 		initalizePlayerCoordinates(x, y);
 	}	
 
 	// Initializes all the sprites.
-	private void initalizeAllSprites() {
+	private void initializeAllSprites() {
 		int index = 1;
 		InputStream inputStream;
 
-		initializeDirections();
 		
 		
-		for (index = 0; index <= numSprites; ++index) {
+		for (index = 0; index < numSprites; ++index) {
 			inputStream = getClass().getResourceAsStream("enemysprites/enemy" + 
 					Integer.toString(index) + 
 					".png");
-			
 			Direction currentDirection = getIndexDirection(index);
 			if (currentDirection != null) {
 				enemyImages.get(currentDirection).add(new Image(inputStream));
@@ -89,6 +89,13 @@ public class Enemy extends Movable implements Entity {
 		return null;
 	}
 	
+	private void updateCurrentSprite() {
+		List<Image> sprites = enemyImages.get(currentDirection);
+		if (sprites != null && !sprites.isEmpty()) {
+			int currentSpriteIndex = (int) ((System.currentTimeMillis() / 100) % sprites.size());
+			currentSprite.setImage(sprites.get(currentSpriteIndex));
+		}
+	}
 	
 	private boolean matchRightSprites(int index) {
 		return index >= 0 && index <= 3;
@@ -127,15 +134,29 @@ public class Enemy extends Movable implements Entity {
 		currentSprite.setTranslateY(y);
 	}
 
-	
+	@Override
+	public double getWidth() {
+		return DEFAULT_WIDTH;
+	}
+	@Override
+	public double getHeight() {
+		return DEFAULT_HEIGHT;
+	}
 
 	public void update(Entity entity) {
 		setDirection(entity);
+		
+		// Updates the velocity based on the input.
+		currentSprite.setTranslateX(getX() + dx);
+		currentSprite.setTranslateY(getY() + dy);
+		
+		lastDirection = currentDirection;
+		updateCurrentSprite();
 	}
 
 	@Override
 	public void draw(Group group) {
-		
+		group.getChildren().add(currentSprite);
 	}
 
 	@Override
@@ -148,20 +169,33 @@ public class Enemy extends Movable implements Entity {
 		return currentDirection;
 	}
 	
-
+	// Uses the Manhattan distance to calculate
+	// where the player needs to move.
 	public double calculateDistance(double x, double y) {
-		return Math.abs(x + this.getX()) + 
-			   Math.abs(y + this.getY());
+		double dx = x - this.getX();
+		double dy = y - this.getY();
+		return Math.sqrt(dx * dx + dy * dy);
+	}
+	
+	// Used for debugging distance from entity.
+	private void debugMinDistance(Double[] allDistances) {
+		String[] directions = { "RIGHT", "LEFT", "UP", "DOWN" };
+		for (int i = 0; i < allDistances.length; ++i) {
+			System.out.print(directions[i] + "=" + allDistances[i] + ",");
+		}
+		System.out.println();
 	}
 	
 	public void setDirection(Entity entity) {
-		Double movedRight = this.getX() + 10;
-		Double movedLeft = this.getX() - 10;
-		Double movedUp = this.getY() - 10;
-		Double movedDown = this.getY() + 10;
+		
+		Double movedRight = calculateDistance(entity.getX() - 30, entity.getY());
+		Double movedLeft = calculateDistance(entity.getX() + 30, entity.getY());
+		Double movedUp = calculateDistance(entity.getX(), entity.getY() + 30);
+		Double movedDown = calculateDistance(entity.getX(), entity.getY() - 30);
 		
 		Double[] allDistances = { movedRight, movedLeft, movedUp, movedDown };
 		Double minDistance = getMin(allDistances);
+				
 		
 		if (minDistance == movedRight) {
 			moveRight(ENEMY_SPEED);
@@ -170,7 +204,7 @@ public class Enemy extends Movable implements Entity {
 		} else if (minDistance == movedUp) {
 			moveUp(ENEMY_SPEED);
 		} else if (minDistance == movedDown) {
-			moveRight(ENEMY_SPEED);
+			moveDown(ENEMY_SPEED);
 		} else {
 			// Do nothing
 		}

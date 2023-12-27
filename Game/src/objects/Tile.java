@@ -61,6 +61,16 @@ public class Tile implements Entity {
 	public void setY(double y) {
 		this.y = y;
 	}
+	
+	@Override
+	public double getWidth() {
+		return DEFAULT_WIDTH;
+	}
+	
+	@Override
+	public double getHeight() {
+		return DEFAULT_HEIGHT;
+	}
 
 	public void update() {
 		

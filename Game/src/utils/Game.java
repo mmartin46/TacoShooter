@@ -3,16 +3,24 @@ package utils;
 
 import java.util.ArrayList;
 
+import collisions.Collisions;
 import input.InputManager;
+import interfaces.Entity;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import movables.Enemy;
 import movables.Player;
+import objects.Tile;
 
 public class Game {
 	
-	private final int DEFAULT_PLAYER_X = 500;
+	private final int MOVABLE_LAYER = 0;
+	private final int NONMOVABLE_LAYER = 1;
+	
+	private final int DEFAULT_PLAYER_X = 200;
 	private final int DEFAULT_PLAYER_Y = 500;
 	private final int NUM_PLAYER_SPRITES = 31;
+	private final int NUM_ENEMY_SPRITES = 16;
 	private final int GAME_SCALE = 2;
 	
 	
@@ -31,6 +39,7 @@ public class Game {
 		
 		initialize();
 	}
+	
 	
 	private void initialize() {		
 		initializeTileMap();
@@ -66,8 +75,19 @@ public class Game {
 	}
 	
 	
+	
 	public void update() {
 		player.update();
+		
+		checkForTileCollisions();
+	}
+	
+	public Player getPlayer() {
+		return player;
+	}
+	
+	public Scene getScene() {
+		return scene;
 	}
 	
 	public void draw(Group group) {
@@ -78,6 +98,43 @@ public class Game {
 			layer.draw(group);
 		}
 		player.draw(group);
+	}
+	
+	private void checkForTileCollisions() {
+		int x, y;
+		Tile[][] tileMap = layers.get(NONMOVABLE_LAYER).getTileMap();
+		for (x = 0; x < tileMap.length; ++x) {
+			for (y = 0; y < tileMap[0].length; ++y) {
+				if (isMovethruTile(tileMap, x, y)) {
+					if (Collisions.entityCollision(player, tileMap[x][y])) {
+						handleTileCollision(tileMap[x][y]);
+					}
+				}
+			}
+		}
+	}
+	
+	// DEBUG: not working correctly
+	private void handleTileCollision(Tile tile) {
+		if (Collisions.leftEdgeTouched(player, tile)) {
+			player.setX(tile.getX() - tile.getWidth());
+		} 
+		
+		if (Collisions.rightEdgeTouched(player, tile)) {
+			player.setX(tile.getX() + tile.getWidth());
+		}  
+		
+		if (Collisions.upEdgeTouched(player, tile)) {
+			player.setY(tile.getY() - tile.getHeight());
+		}  
+		
+		if (Collisions.bottomEdgeTouched(player, tile)) {
+			player.setY(tile.getY() + tile.getHeight());
+		}
+	}
+	
+	private boolean isMovethruTile(Tile[][] tileMatrix, int x, int y) {
+		return (tileMatrix[x][y].getIndex() != -1);
 	}
 	
 	private Pair<Double, Double> getPlayerCoordinates() {
@@ -97,4 +154,6 @@ public class Game {
 		group.setTranslateY(offsetY);
 	}
 
+	
+	
 }

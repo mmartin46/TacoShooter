@@ -22,6 +22,7 @@ public class Player extends Movable implements Entity {
 
 	// Player Sprite
 	private int numSprites;
+	private int health = 100;
 	private ImageView currentSprite;
 	HashMap<Direction, List<Image>> playerImages;
 	
@@ -117,7 +118,14 @@ public class Player extends Movable implements Entity {
 		return index >= 12 && index <= 15;
 	}
 	
-	
+	@Override
+	public double getWidth() {
+		return DEFAULT_WIDTH;
+	}
+	@Override
+	public double getHeight() {
+		return DEFAULT_HEIGHT;
+	}
 	
 	// Handles horizontal and vertical input.
 	private void handleInput() {
@@ -205,6 +213,15 @@ public class Player extends Movable implements Entity {
 		currentSprite.setTranslateY(y);
 	}
 	
+	public int getHealth() {
+		return health;
+	}
+	
+	public void setHealth(int health) {
+		this.health = health;
+	}
+	
+	
 	// Update the current direction
 	public void setCurrentDirection(Direction currentDirection) {
 		this.currentDirection = currentDirection;
@@ -229,6 +246,7 @@ public class Player extends Movable implements Entity {
 			currentSprite.setImage(sprites.get(currentSpriteIndex));
 		}
 	}
+	
 	
 	
 	public double getDX() {

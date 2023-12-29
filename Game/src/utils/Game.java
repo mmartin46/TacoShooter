@@ -17,10 +17,9 @@ public class Game {
 	private final int MOVABLE_LAYER = 0;
 	private final int NONMOVABLE_LAYER = 1;
 	
-	private final int DEFAULT_PLAYER_X = 200;
+	private final int DEFAULT_PLAYER_X = 800;
 	private final int DEFAULT_PLAYER_Y = 500;
 	private final int NUM_PLAYER_SPRITES = 31;
-	private final int NUM_ENEMY_SPRITES = 16;
 	private final int GAME_SCALE = 2;
 	
 	
@@ -49,8 +48,8 @@ public class Game {
 	
 	private void initializeTileMap() {
 		
-		String csvFilePath = "mapfiles/mapfile.csv";
-		String csvFilePath2 = "mapfiles/mapfile_l2.csv";
+		String csvFilePath = "mapfiles/world_1_1_walkable.csv";
+		String csvFilePath2 = "mapfiles/world_1_1_nonwalkable.csv";
 		String tileSheetPath = "mapfiles/maptilesheet.png";
 
 		layers.add(new TileMap(csvFilePath, tileSheetPath));
@@ -95,7 +94,7 @@ public class Game {
 		centerCoordinatesWithPlayer(group);
 		
 		for (TileMap layer : layers) {
-			layer.draw(group);
+			layer.draw(group, player);
 		}
 		player.draw(group);
 	}
@@ -106,9 +105,7 @@ public class Game {
 		for (x = 0; x < tileMap.length; ++x) {
 			for (y = 0; y < tileMap[0].length; ++y) {
 				if (isMovethruTile(tileMap, x, y)) {
-					if (Collisions.entityCollision(player, tileMap[x][y])) {
-						handleTileCollision(tileMap[x][y]);
-					}
+					Collisions.playerBlockCollision(player, tileMap[x][y]);
 				}
 			}
 		}
@@ -116,21 +113,28 @@ public class Game {
 	
 	// DEBUG: not working correctly
 	private void handleTileCollision(Tile tile) {
-		if (Collisions.leftEdgeTouched(player, tile)) {
-			player.setX(tile.getX() - tile.getWidth());
-		} 
-		
-		if (Collisions.rightEdgeTouched(player, tile)) {
+
+ 		if (Collisions.rightEdgeTouched(player, tile)) {
+			// Shift the player right of the block.
+			System.out.println("RIGHT");
 			player.setX(tile.getX() + tile.getWidth());
-		}  
-		
-		if (Collisions.upEdgeTouched(player, tile)) {
-			player.setY(tile.getY() - tile.getHeight());
-		}  
-		
-		if (Collisions.bottomEdgeTouched(player, tile)) {
+			player.setDX(0);
+		} else if (Collisions.leftEdgeTouched(getPlayer(), tile)) {
+			// Shift the player left of the block.
+			System.out.println("LEFT");
+			player.setX(tile.getX() - tile.getWidth());
+			player.setDX(0);
+		} else if (Collisions.upEdgeTouched(player, tile)) {
+			
+			System.out.println("UP");
 			player.setY(tile.getY() + tile.getHeight());
+			player.setDY(0);
+		} else if (Collisions.bottomEdgeTouched(player, tile)) {
+			System.out.println("DOWN");
+			player.setY(tile.getY() - tile.getHeight());
+			player.setDY(0);
 		}
+		
 	}
 	
 	private boolean isMovethruTile(Tile[][] tileMatrix, int x, int y) {

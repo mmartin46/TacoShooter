@@ -7,24 +7,27 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
+import interfaces.BuildingMap;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import movables.Enemy;
+import movables.Player;
 import objects.Tile;
 import states.TileType;
 
 
 
-public class TileMap {
+public class TileMap implements BuildingMap {
 	private final int TILE_SIZE = 20;
 	
 	// Represents all the tiles in the map
 	public Tile[][] tileMap;
+
 	// Represents the integer values of the tiles of
 	// the map.
 	public int[][] indexTileMap;
-	
 	
 	String csvFilePath;
 	MapDimensions tileMapDimensions;
@@ -36,19 +39,21 @@ public class TileMap {
 		this.csvFilePath = csvFilePath;
 		this.tileSheet = getSpriteSheetImage(tileSheetPath);
 		
-		initializeTileMap(0, 0);
+		initializeMap(0, 0);
 		
-		loadTileMapFromCSVFile();
-		setupTileMap();
+		loadMapFromCSVFile();
+		setupMap();
 	}
 	
-	private void initializeTileMap(int columns, int rows) {
+	@Override
+	public final void initializeMap(int columns, int rows) {
 		tileMap = new Tile[rows][columns];
 		indexTileMap = new int[rows][columns];
 	}
 	
 	// Checks if the spritesheet is null and returns it if not.
-	private Image getSpriteSheetImage(String tileSheetPath) {
+	@Override
+	public final Image getSpriteSheetImage(String tileSheetPath) {
 		InputStream spriteSheetInputStream = null;
 		// Try to load the spriteSheet
 		try {
@@ -68,7 +73,8 @@ public class TileMap {
 	
 	
 	// Loads the CSV document
-	private void loadTileMapFromCSVFile() {
+	@Override
+	public final void loadMapFromCSVFile() {
 		int numRows = 0, numColumns = 0;
 		ArrayList<Integer> indexValues = new ArrayList<Integer>();
 		try (InputStream inputStream = getClass().getResourceAsStream(csvFilePath)) {
@@ -98,8 +104,9 @@ public class TileMap {
 		// Initialize the rows and columns
 		tileMapDimensions.setRows(numRows);
 		tileMapDimensions.setColumns(numColumns);
-		initializeTileMap(numRows, numColumns);
+		initializeMap(numRows, numColumns);
 		
+		// System.out.println("indexTileMap dimensions: " + indexTileMap.length + "x" + indexTileMap[0].length);
 		for (int i = 0; i < numRows; ++i) {
 			for (int j = 0; j < numColumns; ++j) {
 				indexTileMap[i][j] = indexValues.get(i * numColumns + j);
@@ -108,18 +115,20 @@ public class TileMap {
 		
 		
 		// Set and load the tiles
-		setupTileMap();
+		setupMap();
 	}
 	
 	
 	// Loads all the tiles
-	private void setupTileMap() {
+	@Override
+	public final void setupMap() {
 		int x, y;
 		
 		try {
 			for (x = 0; x < indexTileMap.length; ++x) {
 				for (y = 0; y < indexTileMap[x].length; ++y) {
-					int tileIndex = indexTileMap[x][y];
+					int tileIndex = filterTileIndex(indexTileMap[x][y]);
+					
 										
 					// Locate the sprite within the map.
 					int columnWithinSheet = tileIndex % (int)(tileSheet.getWidth() / TILE_SIZE);
@@ -141,19 +150,54 @@ public class TileMap {
 		}
 	}
 	
-	public void draw(Group group) {
-		int x, y;
-		for (x = 0; x < indexTileMap.length; ++x) {
-			for (y = 0; y < indexTileMap[x].length; ++y) {
-				// Find the tile within the tile map.
-				Tile currentTile = tileMap[x][y];
-				
+	// If a tile hasn't been loaded properly (due to the Tile editor) load a grass tile.
+	private int filterTileIndex(int tileIndex) {
+		if (Math.abs(tileIndex) > 500) {
+			return GRASS_TILE;
+		}
+		return tileIndex;
+	}
+	
+	public void draw(Group group, Player player) {
 
+		// Renders some tiles at a time.
+		int cameraX = (int) (player.getY() - (doubledScreenWidth()) / 4);
+		int cameraY = (int) (player.getX() - (doubledScreenHeight()) / 4) - 100;
+	
+		
+		
+		lazyDraw(group, (int) cameraX, cameraY, doubledScreenWidth(), 
+												doubledScreenHeight());
+	}
+	
+	private int doubledScreenWidth() {
+		return GameConfigurations.SCREEN_WIDTH * 2;
+	}
+	
+	private int doubledScreenHeight() {
+		return GameConfigurations.SCREEN_HEIGHT * 2;
+	}
+
+	    
+	public void lazyDraw(Group group, int cameraX, int cameraY, int screenWidth, int screenHeight) {
+		int camStartX = Math.max(0,  cameraX / TILE_SIZE);
+		int camStartY = Math.max(0, cameraY / TILE_SIZE);
+		
+		int camEndX = Math.min(tileMapDimensions.getColumns(), (cameraX + screenWidth) / TILE_SIZE + 1);
+		int camEndY = Math.min(tileMapDimensions.getRows(), (cameraY + screenHeight) / TILE_SIZE + 1);
+		
+		
+		for (int x = camStartX; x < camEndX; ++x) {
+			for (int y = camStartY; y < camEndY; ++y) {
+				Tile currentTile = tileMap[x][y];
 				currentTile.draw(group);
 			}
 		}
 	}
-	
+
+
+
+
 	private TileType getTileType(int tileIndex) {
 		if (tileIndex >= 0 && tileIndex <= 8) {
 			return TileType.WALK_THROUGH;
@@ -173,5 +217,6 @@ public class TileMap {
 	public Tile[][] getTileMap() {
 		return tileMap;
 	}
+	
 	
 }

@@ -6,7 +6,7 @@ import javafx.scene.image.ImageView;
 import states.TileType;
 
 public class Tile implements Entity {
-	double x, y;
+	double x, y, dx, dy;
 	int index;
 	TileType tileType;
 	ImageView imageView;
@@ -81,6 +81,26 @@ public class Tile implements Entity {
 		imageView.setLayoutX(getX());
 		imageView.setLayoutY(getY());
 		group.getChildren().add(imageView);
+	}
+
+	@Override
+	public double getDX() {
+		return 0;
+	}
+
+	@Override
+	public double getDY() {
+		return 0;
+	}
+	
+	@Override
+	public void setDX(double dx) {
+		this.dx = dx;
+	}
+	
+	@Override
+	public void setDY(double dy) {
+		this.dy = dy;
 	}
 
 }

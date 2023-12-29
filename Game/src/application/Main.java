@@ -33,23 +33,36 @@ public class Main extends Application {
 		
 		rootPane = new Pane();
 		scene = new Scene(rootPane, SCREEN_WIDTH, SCREEN_HEIGHT);
+		setPixelatedScaling(scene);
 		primaryStage.setScene(scene);
 		
 		initializeGame(scene);
+		
+		primaryStage.setResizable(false);
 		primaryStage.show();
 		
 		
+		intitalizeGameLoop();
+	}
+	
+	private void intitalizeGameLoop() {
 		Timeline gameLoop = new Timeline(new KeyFrame(Duration.millis(
-					GameConfigurations.NUM_MILLIS_DELAY
-				), e -> update()));
+				GameConfigurations.NUM_MILLIS_DELAY
+			), e -> update()));
 		gameLoop.setCycleCount(Animation.INDEFINITE);
 		gameLoop.play();
 	}
+	
+	
 	
 	private void initializeGame(Scene scene) {
 		initializeGroups();
 		game = new Game(scene);
 		initializeHeader();
+	}
+	
+	private void setPixelatedScaling(Scene scene) {
+		scene.getRoot().setStyle("-fx-image-rendering: optimize-speed; -fx-aliasing: pixelated;");
 	}
 	
 	private void initializeGroups() {

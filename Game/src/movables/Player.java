@@ -248,13 +248,24 @@ public class Player extends Movable implements Entity {
 	}
 	
 	
-	
+	@Override
 	public double getDX() {
 		return dx;
 	}
 	
+	@Override
 	public double getDY() {
 		return dy;
+	}
+	
+	@Override
+	public void setDX(double dx) {
+		this.dx = dx;
+	}
+	
+	@Override
+	public void setDY(double dy) {
+		this.dy = dy;
 	}
 	
 

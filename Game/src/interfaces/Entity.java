@@ -11,6 +11,11 @@ public interface Entity {
 	void setX(double x);
 	void setY(double y);
 	
+	double getDX();
+	double getDY();
+	void setDX(double dx);
+	void setDY(double dy);
+	
 	double getWidth();
 	double getHeight();
 	

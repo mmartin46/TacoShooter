@@ -12,27 +12,25 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import movables.Enemy;
 import movables.Player;
 import objects.Tile;
 import states.TileType;
 
 
 
-public class TileMap implements BuildingMap {
+public class TileMap extends BuildingMap {
 	private final int TILE_SIZE = 20;
 	
 	// Represents all the tiles in the map
-	public Tile[][] tileMap;
+	private Tile[][] tileMap;
 
 	// Represents the integer values of the tiles of
 	// the map.
-	public int[][] indexTileMap;
+	private int[][] indexTileMap;
 	
-	String csvFilePath;
-	MapDimensions tileMapDimensions;
-	Image tileSheet;
-	InputStream inputStream;
+	private String csvFilePath;
+	private MapDimensions tileMapDimensions;
+	private Image tileSheet;
 	
 	public TileMap(String csvFilePath, String tileSheetPath) {
 		tileMapDimensions = new MapDimensions();
@@ -49,26 +47,6 @@ public class TileMap implements BuildingMap {
 	public final void initializeMap(int columns, int rows) {
 		tileMap = new Tile[rows][columns];
 		indexTileMap = new int[rows][columns];
-	}
-	
-	// Checks if the spritesheet is null and returns it if not.
-	@Override
-	public final Image getSpriteSheetImage(String tileSheetPath) {
-		InputStream spriteSheetInputStream = null;
-		// Try to load the spriteSheet
-		try {
-			
-			spriteSheetInputStream = getClass().getResourceAsStream(tileSheetPath);
-			
-			if (spriteSheetInputStream == null) {
-				throw new IllegalArgumentException("spriteSheetInputStream(): Invalid path");
-			}
-		} catch (IllegalArgumentException e) {
-			System.err.println("spriteSheetInputStream(): Error loading tile sheet.");
-		}
-		
-		Image spriteSheetImage = new Image(spriteSheetInputStream);
-		return spriteSheetImage;
 	}
 	
 	
@@ -127,7 +105,7 @@ public class TileMap implements BuildingMap {
 		try {
 			for (x = 0; x < indexTileMap.length; ++x) {
 				for (y = 0; y < indexTileMap[x].length; ++y) {
-					int tileIndex = filterTileIndex(indexTileMap[x][y]);
+					int tileIndex = filterTileIndex(indexTileMap[x][y], x, y);
 					
 										
 					// Locate the sprite within the map.
@@ -151,34 +129,14 @@ public class TileMap implements BuildingMap {
 	}
 	
 	// If a tile hasn't been loaded properly (due to the Tile editor) load a grass tile.
-	private int filterTileIndex(int tileIndex) {
+	private int filterTileIndex(int tileIndex, int x, int y) {
 		if (Math.abs(tileIndex) > 500) {
 			return GRASS_TILE;
 		}
 		return tileIndex;
 	}
 	
-	public void draw(Group group, Player player) {
-
-		// Renders some tiles at a time.
-		int cameraX = (int) (player.getY() - (doubledScreenWidth()) / 4);
-		int cameraY = (int) (player.getX() - (doubledScreenHeight()) / 4) - 100;
-	
-		
-		
-		lazyDraw(group, (int) cameraX, cameraY, doubledScreenWidth(), 
-												doubledScreenHeight());
-	}
-	
-	private int doubledScreenWidth() {
-		return GameConfigurations.SCREEN_WIDTH * 2;
-	}
-	
-	private int doubledScreenHeight() {
-		return GameConfigurations.SCREEN_HEIGHT * 2;
-	}
-
-	    
+	@Override    
 	public void lazyDraw(Group group, int cameraX, int cameraY, int screenWidth, int screenHeight) {
 		int camStartX = Math.max(0,  cameraX / TILE_SIZE);
 		int camStartY = Math.max(0, cameraY / TILE_SIZE);

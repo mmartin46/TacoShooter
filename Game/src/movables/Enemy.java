@@ -28,8 +28,6 @@ public class Enemy extends Movable implements Entity {
 	private final double ENEMY_SPEED = 0.4;
 
 
-	private Direction lastDirection;
-	
 	public Enemy(int x, int y, int numSprites) {
 		this.numSprites = numSprites;
 		enemyImages = new HashMap<>();
@@ -150,7 +148,6 @@ public class Enemy extends Movable implements Entity {
 		currentSprite.setTranslateX(getX() + dx);
 		currentSprite.setTranslateY(getY() + dy);
 		
-		lastDirection = currentDirection;
 		updateCurrentSprite();
 	}
 
@@ -195,7 +192,14 @@ public class Enemy extends Movable implements Entity {
 		
 		Double[] allDistances = { movedRight, movedLeft, movedUp, movedDown };
 		Double minDistance = getMin(allDistances);
-				
+	
+		// FIXME: Not accurate, implement an Enemy/Player collision.
+		if (Math.abs(minDistance) >= 29.0 && Math.abs(minDistance) <= 30.0) {
+			if (entity instanceof Player) {
+				double health = entity.getHealth();
+				entity.setHealth(health - 1.0);
+			}
+		}
 		
 		if (minDistance == movedRight) {
 			moveRight(ENEMY_SPEED);
@@ -207,6 +211,8 @@ public class Enemy extends Movable implements Entity {
 			moveDown(ENEMY_SPEED);
 		} else {
 			// Do nothing
+			dx = 0.0;
+			dy = 0.0;
 		}
 	}
 	
@@ -239,6 +245,18 @@ public class Enemy extends Movable implements Entity {
 	@Override
 	public void setDY(double dy) {
 		this.dy = dy;
+	}
+
+	@Override
+	public double getHealth() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void setHealth(double health) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

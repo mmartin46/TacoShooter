@@ -27,6 +27,7 @@ public class Game {
 	private InputManager inputManager;
 	private Player player;
 	private ArrayList<TileMap> layers;
+	private EnemyMap enemyLayer;
 	
 	
 
@@ -50,10 +51,14 @@ public class Game {
 		
 		String csvFilePath = "mapfiles/world_1_1_walkable.csv";
 		String csvFilePath2 = "mapfiles/world_1_1_nonwalkable.csv";
+		String csvFilePath3 = "mapfiles/world_1_1_enemies.csv";
+		// TODO: Create a COIN MAP.
+
 		String tileSheetPath = "mapfiles/maptilesheet.png";
 
 		layers.add(new TileMap(csvFilePath, tileSheetPath));
 		layers.add(new TileMap(csvFilePath2, tileSheetPath));
+		enemyLayer = new EnemyMap(csvFilePath3, tileSheetPath);
 	}
 	
 
@@ -76,6 +81,7 @@ public class Game {
 	
 	
 	public void update() {
+		enemyLayer.update(player);
 		player.update();
 		
 		checkForTileCollisions();
@@ -96,6 +102,7 @@ public class Game {
 		for (TileMap layer : layers) {
 			layer.draw(group, player);
 		}
+		enemyLayer.draw(group, player);
 		player.draw(group);
 	}
 	
@@ -104,42 +111,16 @@ public class Game {
 		Tile[][] tileMap = layers.get(NONMOVABLE_LAYER).getTileMap();
 		for (x = 0; x < tileMap.length; ++x) {
 			for (y = 0; y < tileMap[0].length; ++y) {
-				if (isMovethruTile(tileMap, x, y)) {
-					Collisions.playerBlockCollision(player, tileMap[x][y]);
+				Tile currentTile = tileMap[x][y];
+				if (Collisions.isMovethruTile(tileMap, x, y)) {
+					Collisions.playerBlockCollision(player, currentTile);
 				}
 			}
 		}
 	}
 	
-	// DEBUG: not working correctly
-	private void handleTileCollision(Tile tile) {
-
- 		if (Collisions.rightEdgeTouched(player, tile)) {
-			// Shift the player right of the block.
-			System.out.println("RIGHT");
-			player.setX(tile.getX() + tile.getWidth());
-			player.setDX(0);
-		} else if (Collisions.leftEdgeTouched(getPlayer(), tile)) {
-			// Shift the player left of the block.
-			System.out.println("LEFT");
-			player.setX(tile.getX() - tile.getWidth());
-			player.setDX(0);
-		} else if (Collisions.upEdgeTouched(player, tile)) {
-			
-			System.out.println("UP");
-			player.setY(tile.getY() + tile.getHeight());
-			player.setDY(0);
-		} else if (Collisions.bottomEdgeTouched(player, tile)) {
-			System.out.println("DOWN");
-			player.setY(tile.getY() - tile.getHeight());
-			player.setDY(0);
-		}
-		
-	}
 	
-	private boolean isMovethruTile(Tile[][] tileMatrix, int x, int y) {
-		return (tileMatrix[x][y].getIndex() != -1);
-	}
+
 	
 	private Pair<Double, Double> getPlayerCoordinates() {
 		Double centeredX = ((scene.getWidth() / 2) - player.getX());

@@ -22,7 +22,7 @@ public class Player extends Movable implements Entity {
 
 	// Player Sprite
 	private int numSprites;
-	private int health = 100;
+	private double health = 100;
 	private ImageView currentSprite;
 	HashMap<Direction, List<Image>> playerImages;
 	
@@ -213,15 +213,18 @@ public class Player extends Movable implements Entity {
 		currentSprite.setTranslateY(y);
 	}
 	
-	public int getHealth() {
+	
+	@Override
+	public double getHealth() {
 		return health;
 	}
 	
-	public void setHealth(int health) {
+	@Override
+	public void setHealth(double health) {
 		this.health = health;
 	}
 	
-	
+
 	// Update the current direction
 	public void setCurrentDirection(Direction currentDirection) {
 		this.currentDirection = currentDirection;
@@ -267,6 +270,7 @@ public class Player extends Movable implements Entity {
 	public void setDY(double dy) {
 		this.dy = dy;
 	}
+
 	
 
 }

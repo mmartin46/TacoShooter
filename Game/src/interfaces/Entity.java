@@ -19,5 +19,8 @@ public interface Entity {
 	double getWidth();
 	double getHeight();
 	
+	double getHealth();
+	void setHealth(double health);
+	
 	void draw(Group group);
 }

@@ -8,4 +8,12 @@ public class GameConfigurations {
 	
 	public static int ADJUSTED_WIDTH = SCREEN_WIDTH;
 	public static int ADJUSTED_HEIGHT = SCREEN_HEIGHT;
+	
+	public static int doubledScreenWidth() {
+		return GameConfigurations.SCREEN_WIDTH * 2;
+	}
+	
+	public static int doubledScreenHeight() {
+		return GameConfigurations.SCREEN_HEIGHT * 2;
+	}
 }

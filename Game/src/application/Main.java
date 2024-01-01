@@ -38,7 +38,7 @@ public class Main extends Application {
 		
 		initializeGame(scene);
 		
-		primaryStage.setResizable(false);
+		//primaryStage.setResizable(false);
 		primaryStage.show();
 		
 		

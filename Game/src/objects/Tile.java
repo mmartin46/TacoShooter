@@ -103,4 +103,16 @@ public class Tile implements Entity {
 		this.dy = dy;
 	}
 
+	@Override
+	public double getHealth() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void setHealth(double health) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

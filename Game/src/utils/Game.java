@@ -20,6 +20,8 @@ public class Game {
 	private final int DEFAULT_PLAYER_X = 800;
 	private final int DEFAULT_PLAYER_Y = 500;
 	private final int NUM_PLAYER_SPRITES = 31;
+	private final int NUM_ENEMY_SPRITES = 16;
+
 	private final int GAME_SCALE = 2;
 	
 	
@@ -29,7 +31,7 @@ public class Game {
 	private ArrayList<TileMap> layers;
 	private EnemyMap enemyLayer;
 	
-	
+	private Enemy enemy;
 
 	
 	public Game(Scene scene) {
@@ -41,13 +43,14 @@ public class Game {
 	}
 	
 	
-	private void initialize() {		
-		initializeTileMap();
+	private void initialize() {	
+				
+		initializeLayers();
 		initializePlayer();
 		initializeInputManager();
 	}
 	
-	private void initializeTileMap() {
+	private void initializeLayers() {
 		
 		String csvFilePath = "mapfiles/world_1_1_walkable.csv";
 		String csvFilePath2 = "mapfiles/world_1_1_nonwalkable.csv";
@@ -81,7 +84,7 @@ public class Game {
 	
 	
 	public void update() {
-		enemyLayer.update(player);
+		enemyLayer.update(player, layers.get(NONMOVABLE_LAYER).getTileMap());
 		player.update();
 		
 		checkForTileCollisions();

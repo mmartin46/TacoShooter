@@ -111,16 +111,18 @@ public class EnemyMap extends BuildingMap {
 	
 	
 	
-	public void update(Player player) {
+	public void update(Player player, Tile[][] tileMap) {
 		int x, y;
 		for (x = 0; x < enemyMap.length; ++x) {
 			for (y = 0; y < enemyMap[0].length; ++y) {
 				if (enemyMap[x][y] != null) {
-					enemyMap[x][y].update(player);
+					enemyMap[x][y].update(player, tileMap);
 				}
 			}
 		}
 	}
+	
+	
 	
 	
 	@Override

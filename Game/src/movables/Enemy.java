@@ -5,12 +5,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import collisions.Collisions;
 import interfaces.Direction;
 import interfaces.Entity;
 import interfaces.Movable;
 import javafx.scene.Group;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import objects.Tile;
 
 public class Enemy extends Movable implements Entity {
 	// Constants
@@ -141,15 +143,29 @@ public class Enemy extends Movable implements Entity {
 		return DEFAULT_HEIGHT;
 	}
 
-	public void update(Entity entity) {
+	public void update(Entity entity, Tile[][] tileMap) {
 		setDirection(entity);
 		
+				
+		collisionWithTile(tileMap);
 		// Updates the velocity based on the input.
 		currentSprite.setTranslateX(getX() + dx);
 		currentSprite.setTranslateY(getY() + dy);
 		
 		updateCurrentSprite();
 	}
+	
+	private void collisionWithTile(Tile[][] tileMap) {
+		int x, y;
+		for (x = 0; x < tileMap.length; ++x) {
+			for (y = 0; y < tileMap[0].length; ++y) {
+				if (Collisions.isMovethruTile(tileMap, x, y)) {
+					Collisions.playerBlockCollision(this, tileMap[x][y]);
+				}
+			}
+		}
+	}
+	
 
 	@Override
 	public void draw(Group group) {
@@ -166,13 +182,7 @@ public class Enemy extends Movable implements Entity {
 		return currentDirection;
 	}
 	
-	// Uses the Manhattan distance to calculate
-	// where the player needs to move.
-	public double calculateDistance(double x, double y) {
-		double dx = x - this.getX();
-		double dy = y - this.getY();
-		return Math.sqrt(dx * dx + dy * dy);
-	}
+
 	
 	// Used for debugging distance from entity.
 	private void debugMinDistance(Double[] allDistances) {
@@ -183,12 +193,16 @@ public class Enemy extends Movable implements Entity {
 		System.out.println();
 	}
 	
+	private void debugXYCoordinates() {
+		System.out.printf("Enemy() : x = %.1f, y = %.1f\n", this.getX(), this.getY());
+	}
+	
 	public void setDirection(Entity entity) {
 		
-		Double movedRight = calculateDistance(entity.getX() - 30, entity.getY());
-		Double movedLeft = calculateDistance(entity.getX() + 30, entity.getY());
-		Double movedUp = calculateDistance(entity.getX(), entity.getY() + 30);
-		Double movedDown = calculateDistance(entity.getX(), entity.getY() - 30);
+		Double movedRight = Collisions.calculateDistance(this, entity.getX() - 30, entity.getY());
+		Double movedLeft = Collisions.calculateDistance(this, entity.getX() + 30, entity.getY());
+		Double movedUp = Collisions.calculateDistance(this, entity.getX(), entity.getY() + 30);
+		Double movedDown = Collisions.calculateDistance(this, entity.getX(), entity.getY() - 30);
 		
 		Double[] allDistances = { movedRight, movedLeft, movedUp, movedDown };
 		Double minDistance = getMin(allDistances);

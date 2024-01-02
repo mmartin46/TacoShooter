@@ -85,12 +85,12 @@ public class Tile implements Entity {
 
 	@Override
 	public double getDX() {
-		return 0;
+		return dx;
 	}
 
 	@Override
 	public double getDY() {
-		return 0;
+		return dy;
 	}
 	
 	@Override

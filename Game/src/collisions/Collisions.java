@@ -50,6 +50,14 @@ public class Collisions {
 		return (tileMatrix[x][y].getIndex() != -1);
 	}
 	
+	// Uses the Manhattan distance to calculate
+	// where the player needs to move.
+	public static double calculateDistance(Entity currentEntity, double x, double y) {
+		double dx = x - currentEntity.getX();
+		double dy = y - currentEntity.getY();
+		return Math.sqrt(dx * dx + dy * dy);
+	}
+	
 	public static boolean playerBlockCollision(Entity entity, Entity block) {
 		double px = entity.getX(), py = entity.getY();
 		double pw = entity.getWidth(), ph = entity.getHeight();

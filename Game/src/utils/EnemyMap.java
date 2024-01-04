@@ -17,6 +17,7 @@ import objects.Tile;
 public class EnemyMap extends BuildingMap {
 
 	private static final double TILE_SIZE = 20;
+	private final double NO_ENEMY_HEALTH = 0;
 	public Enemy[][] enemyMap;
 	private int[][] indexEnemyMap;
 	
@@ -117,9 +118,18 @@ public class EnemyMap extends BuildingMap {
 			for (y = 0; y < enemyMap[0].length; ++y) {
 				if (enemyMap[x][y] != null) {
 					enemyMap[x][y].update(player, tileMap);
+					enemyMap[x][y].collisionWithBullet(player.getBullets());
+					
+					if (shouldRemoveEnemy(enemyMap[x][y])) {
+						enemyMap[x][y] = null;
+					}
 				}
 			}
 		}
+	}
+	
+	private boolean shouldRemoveEnemy(Enemy enemy) {
+		return enemy.getHealth() <= NO_ENEMY_HEALTH;
 	}
 	
 	

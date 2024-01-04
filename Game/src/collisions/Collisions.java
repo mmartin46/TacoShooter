@@ -5,6 +5,9 @@ import objects.Tile;
 
 public class Collisions {
 	
+	public final static boolean COLLIDE_WITH_ENTITY = true;
+	public final static boolean PASS_THORUGH_ENTITY = false;
+	
 	public static boolean entityCollision(Entity entity, Entity enemy) {
 		boolean horizontalCollision = leftEdgeTouched(entity, enemy) 
 								   && rightEdgeTouched(entity, enemy);
@@ -58,7 +61,7 @@ public class Collisions {
 		return Math.sqrt(dx * dx + dy * dy);
 	}
 	
-	public static boolean playerBlockCollision(Entity entity, Entity block) {
+	public static boolean playerBlockCollision(Entity entity, Entity block, boolean doCollide) {
 		double px = entity.getX(), py = entity.getY();
 		double pw = entity.getWidth(), ph = entity.getHeight();
 
@@ -69,26 +72,35 @@ public class Collisions {
 		
 		// Bottom collision
 		if (px + pw / 2 > bx && px + pw / 2 < bx + bw && py < by + bh && py > by && entity.getDY() < 0) {
-			entity.setY(by + bh);
-			entity.setDY(0);
+			
+			if (doCollide == COLLIDE_WITH_ENTITY) {
+				entity.setY(by + bh);
+				entity.setDY(0);
+			}
 			collided = true;
 		}
 		// Top Collision
 		if (px + pw > bx && px < bx + bw && py + ph > by && py < by && entity.getDY() > 0) {
-			entity.setY(by - ph);
-			entity.setDY(0);
+			if (doCollide == COLLIDE_WITH_ENTITY) {
+				entity.setY(by - ph);
+				entity.setDY(0);
+			}
 			collided = true;
 		}
 		// Right Edge
 		if (py + ph > by && py < by + bh && px < bx + bw && px + pw > bx + bw && entity.getDX() < 0) {
-			entity.setX(bx + bw);
-			entity.setDX(0);
+			if (doCollide == COLLIDE_WITH_ENTITY) {
+				entity.setX(bx + bw);
+				entity.setDX(0);
+			}
 			collided = true;
 		} 
 		// Left Edge
 		if (py + ph > by && py < by + bh && px + pw > bx && px < bx && entity.getDX() > 0) {
-			entity.setX(bx - pw);
-			entity.setDX(0);
+			if (doCollide == COLLIDE_WITH_ENTITY) {
+				entity.setX(bx - pw);
+				entity.setDX(0);
+			}
 			collided = true;
 		} 
 		return collided;

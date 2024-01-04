@@ -21,8 +21,11 @@ public class Enemy extends Movable implements Entity {
 
 	// Player Sprite
 	private int numSprites;
+	
+	private double health;
 	private ImageView currentSprite;
 	HashMap<Direction, List<Image>> enemyImages;
+	private HealthBar healthBar;
 	
 	// Player Direction
 	private Direction currentDirection;
@@ -36,6 +39,7 @@ public class Enemy extends Movable implements Entity {
 		initializeEnemy(x, y);
 	}
 	
+	 
 	private void initalizePlayerCoordinates(double x, double y) {
 		setX(x);
 		setY(y);
@@ -48,8 +52,14 @@ public class Enemy extends Movable implements Entity {
 		currentDirection = Direction.RIGHT;
 		currentSprite = new ImageView(enemyImages.get(currentDirection).get(INITIAL_SPRITE));
 		initalizePlayerCoordinates(x, y);
+		initializeHealthBar();
 	}	
 
+	private void initializeHealthBar() {
+		setHealth(DEFAULT_HEALTH);
+		healthBar = new HealthBar(this);
+	}
+	
 	// Initializes all the sprites.
 	private void initializeAllSprites() {
 		int index = 1;
@@ -147,29 +157,50 @@ public class Enemy extends Movable implements Entity {
 		setDirection(entity);
 		
 				
-		collisionWithTile(tileMap);
+		collisionWithTile(entity, tileMap);
 		// Updates the velocity based on the input.
 		currentSprite.setTranslateX(getX() + dx);
 		currentSprite.setTranslateY(getY() + dy);
 		
 		updateCurrentSprite();
+		healthBar.update();
 	}
 	
-	private void collisionWithTile(Tile[][] tileMap) {
+	private void collisionWithTile(Entity entity, Tile[][] tileMap) {
 		int x, y;
 		for (x = 0; x < tileMap.length; ++x) {
 			for (y = 0; y < tileMap[0].length; ++y) {
 				if (Collisions.isMovethruTile(tileMap, x, y)) {
-					Collisions.playerBlockCollision(this, tileMap[x][y]);
+					Collisions.playerBlockCollision(this, tileMap[x][y], 
+												Collisions.COLLIDE_WITH_ENTITY);
+					
+					// Checks for collision with the player.
+					if (Collisions.playerBlockCollision(this, entity, 
+										Collisions.PASS_THORUGH_ENTITY)) {
+						if (entity instanceof Player) {
+							entity.setHealth(entity.getHealth() - 0.00004);
+						}
+					}
 				}
 			}
 		}
 	}
 	
+	public void collisionWithBullet(ArrayList<Attack> bullets) {
+		for (Attack bullet : bullets) {
+			if (Collisions.playerBlockCollision(this, bullet, Collisions.PASS_THORUGH_ENTITY)) {
+				
+				setHealth(getHealth() - 1);
+			}
+		}
+	}
+	
+	
 
 	@Override
 	public void draw(Group group) {
 		group.getChildren().add(currentSprite);
+		healthBar.draw(group);
 	}
 
 	@Override
@@ -206,14 +237,6 @@ public class Enemy extends Movable implements Entity {
 		
 		Double[] allDistances = { movedRight, movedLeft, movedUp, movedDown };
 		Double minDistance = getMin(allDistances);
-	
-		// FIXME: Not accurate, implement an Enemy/Player collision.
-		if (Math.abs(minDistance) >= 29.0 && Math.abs(minDistance) <= 30.0) {
-			if (entity instanceof Player) {
-				double health = entity.getHealth();
-				entity.setHealth(health - 1.0);
-			}
-		}
 		
 		if (minDistance == movedRight) {
 			moveRight(ENEMY_SPEED);
@@ -263,14 +286,12 @@ public class Enemy extends Movable implements Entity {
 
 	@Override
 	public double getHealth() {
-		// TODO Auto-generated method stub
-		return 0;
+		return health;
 	}
 
 	@Override
 	public void setHealth(double health) {
-		// TODO Auto-generated method stub
-		
+		this.health = health;
 	}
 	
 }

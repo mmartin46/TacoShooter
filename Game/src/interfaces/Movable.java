@@ -4,6 +4,7 @@ package interfaces;
 
 public abstract class Movable {
 	public double dx, dy;
+	public final double DEFAULT_HEALTH = 100.0;
 	public abstract void setCurrentDirection(Direction currentDirection);
 	public abstract Direction getCurrentDirection();
 	

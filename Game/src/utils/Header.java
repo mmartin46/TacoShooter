@@ -66,7 +66,8 @@ public class Header {
 	
 	
 	private void updateFontText() {
-		headerSentence = "Player x" + player.getHealth();
+		headerSentence = "Player x" + (int) player.getHealth();
+		headerSentence += "\tCoins x" + (int) player.getCoinsCollected();
 		this.textGraphic.setText(headerSentence);
 	}
 	

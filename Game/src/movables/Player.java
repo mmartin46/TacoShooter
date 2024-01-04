@@ -9,10 +9,13 @@ import input.InputManager;
 import interfaces.Direction;
 import interfaces.Entity;
 import interfaces.Movable;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.scene.Group;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import javafx.util.Duration;
 
 
 public class Player extends Movable implements Entity {
@@ -22,7 +25,20 @@ public class Player extends Movable implements Entity {
 
 	// Player Sprite
 	private int numSprites;
-	private double health = 100;
+	
+	// Player Utilities
+	private double health;
+	private double coinsCollected = 0;
+
+	private ArrayList<Attack> bullets;
+	private int currentBulletIndex = 0;
+	private final int NUM_BULLETS = 50;
+
+	// Timer
+	private long lastSpacePressed = 0;
+	private final long bulletDelayMillis = 100;
+
+	// Sprites
 	private ImageView currentSprite;
 	HashMap<Direction, List<Image>> playerImages;
 	
@@ -31,6 +47,10 @@ public class Player extends Movable implements Entity {
 	private Direction lastDirection;
 	
 	private final double PLAYER_SPEED = 2.0;
+	
+	public ArrayList<Attack> getBullets() {
+		return bullets;
+	}
 	
 	public Player() {
 		
@@ -41,6 +61,17 @@ public class Player extends Movable implements Entity {
 		playerImages = new HashMap<>();
 		setCurrentDirection(Direction.RIGHT);
 		initializePlayer(x, y);
+		
+		// Attacks
+		initializeBullets();
+	}
+	
+	private void initializeBullets() {
+		bullets = new ArrayList<Attack>();
+		
+		for (int i = 0; i < NUM_BULLETS; ++i) {
+			bullets.add(new Attack(this));
+		}
 	}
 
 	public ImageView getSprite() {
@@ -48,6 +79,7 @@ public class Player extends Movable implements Entity {
 	}
 	
 	private void initializePlayer(double x, double y) {
+		setHealth(DEFAULT_HEALTH);
 		initalizeAllSprites();
 		
 		currentSprite = new ImageView(playerImages.get(currentDirection).get(INITIAL_SPRITE));
@@ -58,6 +90,36 @@ public class Player extends Movable implements Entity {
 	private void initalizePlayerCoordinates(double x, double y) {
 		setX(x);
 		setY(y);
+	}
+	
+	private void handleShotMovement() {
+		long currentTime = System.currentTimeMillis();
+		if (isKeyPressed(KeyCode.SPACE) &&
+			enoughTimePassedForBullet(currentTime)) {
+			
+			allowShotToMove();
+			lastSpacePressed = currentTime;
+		}
+	}
+	
+	private boolean enoughTimePassedForBullet(long currentTime) {
+		return (currentTime - lastSpacePressed) > bulletDelayMillis;
+	}
+	
+	private void allowShotToMove() {
+		if (currentBulletIndex >= NUM_BULLETS) {
+			currentBulletIndex = 0;
+			resetBulletCoordinates();
+		} else {
+			bullets.get(currentBulletIndex++).setAllowShot(true);
+		}
+	}
+	
+	private void resetBulletCoordinates() {
+		for (int i = 0; i < NUM_BULLETS; ++i) {
+			Attack currentBullet = bullets.get(i);
+			currentBullet.setAllowShot(false);
+		}
 	}
 	
 	// Initializes all the sprites.
@@ -173,6 +235,19 @@ public class Player extends Movable implements Entity {
 			lastDirection = currentDirection;
 			updateCurrentSprite();
 		}
+		updateBullets();
+		handleShotMovement();
+	}
+	
+	private void drawBullets(Group group) {
+		for (int i = 0; i < NUM_BULLETS; ++i) {
+			bullets.get(i).draw(group);
+		}
+	}
+	private void updateBullets() {
+		for (int i = 0; i < NUM_BULLETS; ++i) {
+			bullets.get(i).update();
+		}
 	}
 	
 	// Returns true if the player isn't moving.
@@ -182,6 +257,7 @@ public class Player extends Movable implements Entity {
 
 	@Override
 	public void draw(Group group) {
+		drawBullets(group);
 		group.getChildren().add(currentSprite);
 	}
 	
@@ -269,6 +345,22 @@ public class Player extends Movable implements Entity {
 	@Override
 	public void setDY(double dy) {
 		this.dy = dy;
+	}
+
+	public double getCoinsCollected() {
+		return coinsCollected;
+	}
+
+	public void setCoinsCollected(double coinsCollected) {
+		this.coinsCollected = coinsCollected;
+	}
+
+	public int getCurrentBulletIndex() {
+		return currentBulletIndex;
+	}
+
+	public void setCurrentBulletIndex(int currentBulletIndex) {
+		this.currentBulletIndex = currentBulletIndex;
 	}
 
 	

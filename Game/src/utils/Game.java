@@ -16,6 +16,7 @@ public class Game {
 	
 	private final int MOVABLE_LAYER = 0;
 	private final int NONMOVABLE_LAYER = 1;
+	private final int COIN_LAYER = 2;
 	
 	private final int DEFAULT_PLAYER_X = 800;
 	private final int DEFAULT_PLAYER_Y = 500;
@@ -56,11 +57,13 @@ public class Game {
 		String csvFilePath2 = "mapfiles/world_1_1_nonwalkable.csv";
 		String csvFilePath3 = "mapfiles/world_1_1_enemies.csv";
 		// TODO: Create a COIN MAP.
+		String csvFilePath4 = "mapfiles/world_1_1_tacos.csv";
 
 		String tileSheetPath = "mapfiles/maptilesheet.png";
 
 		layers.add(new TileMap(csvFilePath, tileSheetPath));
 		layers.add(new TileMap(csvFilePath2, tileSheetPath));
+		layers.add(new TileMap(csvFilePath4, tileSheetPath));
 		enemyLayer = new EnemyMap(csvFilePath3, tileSheetPath);
 	}
 	
@@ -90,6 +93,8 @@ public class Game {
 		checkForTileCollisions();
 	}
 	
+
+	
 	public Player getPlayer() {
 		return player;
 	}
@@ -112,11 +117,17 @@ public class Game {
 	private void checkForTileCollisions() {
 		int x, y;
 		Tile[][] tileMap = layers.get(NONMOVABLE_LAYER).getTileMap();
+		Tile[][] coinMap = layers.get(COIN_LAYER).getTileMap();
 		for (x = 0; x < tileMap.length; ++x) {
 			for (y = 0; y < tileMap[0].length; ++y) {
 				Tile currentTile = tileMap[x][y];
+				Tile currentCoin = coinMap[x][y];
 				if (Collisions.isMovethruTile(tileMap, x, y)) {
-					Collisions.playerBlockCollision(player, currentTile);
+					Collisions.playerBlockCollision(player, currentTile, Collisions.COLLIDE_WITH_ENTITY);
+				}
+				
+				if (Collisions.playerBlockCollision(player, currentCoin, Collisions.PASS_THORUGH_ENTITY)) {
+					System.out.println("WOAH");
 				}
 			}
 		}

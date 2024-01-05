@@ -6,16 +6,21 @@ import javafx.scene.image.ImageView;
 import states.TileType;
 
 public class Tile implements Entity {
+	
+	private final int INVISIBLE_INDEX = -1;
+	
 	double x, y, dx, dy;
 	int index;
 	TileType tileType;
 	ImageView imageView;
+	boolean allowVisibility;
 	
 	public Tile(int index, double x, double y, TileType tileType, ImageView imageView) {
 		setIndex(index);
 		setX(x);
 		setY(y);
 		setImageView(imageView);
+		setVisibility(true);
 	}
 	
 	public void setImageView(ImageView imageView) {
@@ -75,12 +80,27 @@ public class Tile implements Entity {
 	public void update() {
 		
 	}
+	
+	public void setVisibility(boolean visibility) {
+		this.allowVisibility = visibility;
+	}
+	
+	public boolean getVisibility() {
+		return allowVisibility;
+	}
 
 	@Override
 	public void draw(Group group) {
-		imageView.setLayoutX(getX());
-		imageView.setLayoutY(getY());
-		group.getChildren().add(imageView);
+		if (getVisibility()) {
+			imageView.setLayoutX(getX());
+			imageView.setLayoutY(getY());
+			group.getChildren().add(imageView);
+		}
+	}
+	
+	public void makeTileInvisible() {
+		setVisibility(false);
+		setIndex(INVISIBLE_INDEX);
 	}
 
 	@Override

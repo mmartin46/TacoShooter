@@ -118,16 +118,23 @@ public class Game {
 		int x, y;
 		Tile[][] tileMap = layers.get(NONMOVABLE_LAYER).getTileMap();
 		Tile[][] coinMap = layers.get(COIN_LAYER).getTileMap();
+		Tile currentTile, currentCoin;
+		
 		for (x = 0; x < tileMap.length; ++x) {
 			for (y = 0; y < tileMap[0].length; ++y) {
-				Tile currentTile = tileMap[x][y];
-				Tile currentCoin = coinMap[x][y];
+				currentTile = tileMap[x][y];
+				currentCoin = coinMap[x][y];
+				
+				
 				if (Collisions.isMovethruTile(tileMap, x, y)) {
 					Collisions.playerBlockCollision(player, currentTile, Collisions.COLLIDE_WITH_ENTITY);
 				}
 				
-				if (Collisions.playerBlockCollision(player, currentCoin, Collisions.PASS_THORUGH_ENTITY)) {
-					System.out.println("WOAH");
+				if (currentCoin != null) {
+					if (currentCoin.getIndex() == TileMap.COIN_VALUE && Collisions.playerBlockCollision(player, currentCoin, Collisions.PASS_THORUGH_ENTITY)) {
+						currentCoin.makeTileInvisible();
+						player.increaseCoinsCollected(GameConfigurations.DEFAULT_COIN_ADDITION);
+					}
 				}
 			}
 		}

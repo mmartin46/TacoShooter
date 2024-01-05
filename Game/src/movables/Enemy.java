@@ -188,7 +188,8 @@ public class Enemy extends Movable implements Entity {
 	
 	public void collisionWithBullet(ArrayList<Attack> bullets) {
 		for (Attack bullet : bullets) {
-			if (Collisions.playerBlockCollision(this, bullet, Collisions.PASS_THORUGH_ENTITY)) {
+			if (Collisions.playerBlockCollision(this, bullet, Collisions.PASS_THORUGH_ENTITY) &&
+				bullet.getAllowShot()) {
 				
 				setHealth(getHealth() - 1);
 			}

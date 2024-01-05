@@ -20,6 +20,7 @@ import states.TileType;
 
 public class TileMap extends BuildingMap {
 	private final int TILE_SIZE = 20;
+	public static final int COIN_VALUE = 26;
 	
 	// Represents all the tiles in the map
 	private Tile[][] tileMap;

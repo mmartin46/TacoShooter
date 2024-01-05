@@ -326,6 +326,10 @@ public class Player extends Movable implements Entity {
 		}
 	}
 	
+	public void increaseCoinsCollected(int numCoins) {
+		coinsCollected += numCoins;
+	}
+	
 	
 	@Override
 	public double getDX() {

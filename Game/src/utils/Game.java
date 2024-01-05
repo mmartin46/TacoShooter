@@ -17,6 +17,7 @@ public class Game {
 	private final int MOVABLE_LAYER = 0;
 	private final int NONMOVABLE_LAYER = 1;
 	private final int COIN_LAYER = 2;
+	private final int ENEMY_LAYER = 3;
 	
 	private final int DEFAULT_PLAYER_X = 800;
 	private final int DEFAULT_PLAYER_Y = 500;
@@ -31,6 +32,8 @@ public class Game {
 	private Player player;
 	private ArrayList<TileMap> layers;
 	private EnemyMap enemyLayer;
+	
+	private ArrayList<String> filePaths;
 	
 	private Enemy enemy;
 	
@@ -72,18 +75,32 @@ public class Game {
 	 */
 	private void initializeLayers() {
 		layers.clear();
-		String csvFilePath = "mapfiles/world_1_1_walkable.csv";
-		String csvFilePath2 = "mapfiles/world_1_1_nonwalkable.csv";
-		String csvFilePath3 = "mapfiles/world_1_1_enemies.csv";
-		// TODO: Create a COIN MAP.
-		String csvFilePath4 = "mapfiles/world_1_1_tacos.csv";
+		initializeFilePaths();
 
 		String tileSheetPath = "mapfiles/maptilesheet.png";
 
-		layers.add(new TileMap(csvFilePath, tileSheetPath));
-		layers.add(new TileMap(csvFilePath2, tileSheetPath));
-		layers.add(new TileMap(csvFilePath4, tileSheetPath));
-		enemyLayer = new EnemyMap(csvFilePath3, tileSheetPath);
+		layers.add(new TileMap(filePaths.get(MOVABLE_LAYER), tileSheetPath));
+		layers.add(new TileMap(filePaths.get(NONMOVABLE_LAYER), tileSheetPath));
+		layers.add(new TileMap(filePaths.get(COIN_LAYER), tileSheetPath));
+		enemyLayer = new EnemyMap(filePaths.get(ENEMY_LAYER), tileSheetPath);
+	}
+	
+	private void initializeFilePaths() {
+		filePaths = new ArrayList<String>();
+		addToFilePaths("mapfiles/world_1_1_walkable.csv");
+		addToFilePaths("mapfiles/world_1_1_nonwalkable.csv");
+		addToFilePaths("mapfiles/world_1_1_tacos.csv");
+		addToFilePaths("mapfiles/world_1_1_enemies.csv");
+	}
+	
+	// Add to the file paths for the maps
+	// if there are not too many maps.
+	private void addToFilePaths(String filePath) {
+		if (filePaths.size() <= 4) {
+			filePaths.add(filePath);
+		} else {
+			System.err.println("addToFilePaths(): filePath list is full");
+		}
 	}
 	
 

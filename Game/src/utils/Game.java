@@ -33,6 +33,8 @@ public class Game {
 	private EnemyMap enemyLayer;
 	
 	private Enemy enemy;
+	
+	private boolean allowGameRun;
 
 	
 	public Game(Scene scene) {
@@ -43,16 +45,33 @@ public class Game {
 		initialize();
 	}
 	
+	/**
+	 * Allows the game to be ran.
+	 * @param allowGameRun
+	 */
+	public void setAllowGameRun(boolean allowGameRun) {
+		this.allowGameRun = allowGameRun;
+	}
 	
+	public boolean getAllowGameRun() {
+		return allowGameRun;
+	}
+	
+	
+	// Initializes everything within the game.
 	private void initialize() {	
-				
+		setAllowGameRun(true);
 		initializeLayers();
 		initializePlayer();
 		initializeInputManager();
 	}
 	
+	/*
+	 *  Creates maps based on coordinates of the
+	 *  map based on CSV files.
+	 */
 	private void initializeLayers() {
-		
+		layers.clear();
 		String csvFilePath = "mapfiles/world_1_1_walkable.csv";
 		String csvFilePath2 = "mapfiles/world_1_1_nonwalkable.csv";
 		String csvFilePath3 = "mapfiles/world_1_1_enemies.csv";
@@ -85,12 +104,15 @@ public class Game {
 	}
 	
 	
-	
+	// Updates the game
 	public void update() {
-		enemyLayer.update(player, layers.get(NONMOVABLE_LAYER).getTileMap());
-		player.update();
-		
-		checkForTileCollisions();
+		if (getAllowGameRun()) {
+			enemyLayer.update(player, layers.get(NONMOVABLE_LAYER).getTileMap());
+			player.update();
+			
+			checkForTileCollisions();
+			checkForPlayerDeath();
+		}
 	}
 	
 
@@ -103,6 +125,7 @@ public class Game {
 		return scene;
 	}
 	
+	// Draws the game to a specific group.
 	public void draw(Group group) {
 		clearGameGroup(group);
 		centerCoordinatesWithPlayer(group);
@@ -125,11 +148,16 @@ public class Game {
 				currentTile = tileMap[x][y];
 				currentCoin = coinMap[x][y];
 				
-				
+				/*
+				 * If the player can move through
+				 * the tile, don't block the player's
+				 * movement.
+				 */
 				if (Collisions.isMovethruTile(tileMap, x, y)) {
 					Collisions.playerBlockCollision(player, currentTile, Collisions.COLLIDE_WITH_ENTITY);
 				}
 				
+				// If the player collided with a coin.
 				if (currentCoin != null) {
 					if (currentCoin.getIndex() == TileMap.COIN_VALUE && Collisions.playerBlockCollision(player, currentCoin, Collisions.PASS_THORUGH_ENTITY)) {
 						currentCoin.makeTileInvisible();
@@ -141,8 +169,7 @@ public class Game {
 	}
 	
 	
-
-	
+	// Returns the centered coordinates.
 	private Pair<Double, Double> getPlayerCoordinates() {
 		Double centeredX = ((scene.getWidth() / 2) - player.getX());
 		Double centeredY = ((scene.getHeight() / 2) - player.getY());
@@ -152,12 +179,25 @@ public class Game {
 		return coordinates;
 	}
 	
+	// Centers the position of the scene based on the player.
 	private void centerCoordinatesWithPlayer(Group group) {
 		Double offsetX = getPlayerCoordinates().getFirst();
 		Double offsetY = getPlayerCoordinates().getSecond();
 		
 		group.setTranslateX(offsetX);
 		group.setTranslateY(offsetY);
+	}
+	
+	private void checkForPlayerDeath() {
+		if (player.getHealth() <= 0.0) {
+			player.setDidPlayerDie(true);
+			handlePlayerDeath();
+		}
+	}
+	
+	private void handlePlayerDeath() {
+		initializeLayers();
+		player.resetAll(DEFAULT_PLAYER_X, DEFAULT_PLAYER_Y);
 	}
 
 	

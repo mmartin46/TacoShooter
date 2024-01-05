@@ -14,6 +14,10 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import objects.Tile;
 
+/**
+ * Represents an enemy that is used against
+ * the Player class.
+ */
 public class Enemy extends Movable implements Entity {
 	// Constants
 	private final int INITIAL_SPRITE = 0;
@@ -39,8 +43,7 @@ public class Enemy extends Movable implements Entity {
 		initializeEnemy(x, y);
 	}
 	
-	 
-	private void initalizePlayerCoordinates(double x, double y) {
+	private void initalizeEnemyCoordinates(double x, double y) {
 		setX(x);
 		setY(y);
 	}
@@ -51,7 +54,7 @@ public class Enemy extends Movable implements Entity {
 
 		currentDirection = Direction.RIGHT;
 		currentSprite = new ImageView(enemyImages.get(currentDirection).get(INITIAL_SPRITE));
-		initalizePlayerCoordinates(x, y);
+		initalizeEnemyCoordinates(x, y);
 		initializeHealthBar();
 	}	
 
@@ -99,6 +102,10 @@ public class Enemy extends Movable implements Entity {
 		return null;
 	}
 	
+	/**
+	 * Updates the current sprite
+	 * based on the time.
+	 */
 	private void updateCurrentSprite() {
 		List<Image> sprites = enemyImages.get(currentDirection);
 		if (sprites != null && !sprites.isEmpty()) {
@@ -124,35 +131,13 @@ public class Enemy extends Movable implements Entity {
 	}
 	
 
-	@Override
-	public double getX() {
-		return currentSprite.getTranslateX();
-	}
 
-	@Override
-	public double getY() {
-		return currentSprite.getTranslateY();
-	}
-
-	@Override
-	public void setX(double x) {
-		currentSprite.setTranslateX(x);
-	}
-
-	@Override
-	public void setY(double y) {
-		currentSprite.setTranslateY(y);
-	}
-
-	@Override
-	public double getWidth() {
-		return DEFAULT_WIDTH;
-	}
-	@Override
-	public double getHeight() {
-		return DEFAULT_HEIGHT;
-	}
-
+	/**
+	 * Updates the position of the enemy based
+	 * on the tileMap and the given entity.
+	 * @param entity
+	 * @param tileMap
+	 */
 	public void update(Entity entity, Tile[][] tileMap) {
 		setDirection(entity);
 		
@@ -166,6 +151,7 @@ public class Enemy extends Movable implements Entity {
 		healthBar.update();
 	}
 	
+	// Handles collision with a tile.
 	private void collisionWithTile(Entity entity, Tile[][] tileMap) {
 		int x, y;
 		for (x = 0; x < tileMap.length; ++x) {
@@ -186,6 +172,7 @@ public class Enemy extends Movable implements Entity {
 		}
 	}
 	
+	// Handles collision with a bullet.
 	public void collisionWithBullet(ArrayList<Attack> bullets) {
 		for (Attack bullet : bullets) {
 			if (Collisions.playerBlockCollision(this, bullet, Collisions.PASS_THORUGH_ENTITY) &&
@@ -215,20 +202,6 @@ public class Enemy extends Movable implements Entity {
 	}
 	
 
-	
-	// Used for debugging distance from entity.
-	private void debugMinDistance(Double[] allDistances) {
-		String[] directions = { "RIGHT", "LEFT", "UP", "DOWN" };
-		for (int i = 0; i < allDistances.length; ++i) {
-			System.out.print(directions[i] + "=" + allDistances[i] + ",");
-		}
-		System.out.println();
-	}
-	
-	private void debugXYCoordinates() {
-		System.out.printf("Enemy() : x = %.1f, y = %.1f\n", this.getX(), this.getY());
-	}
-	
 	public void setDirection(Entity entity) {
 		
 		Double movedRight = Collisions.calculateDistance(this, entity.getX() - 30, entity.getY());
@@ -265,6 +238,9 @@ public class Enemy extends Movable implements Entity {
 		return min;
 	}
 
+	
+	// Getters and Setters
+	
 	@Override
 	public double getDX() {
 		return dx;
@@ -294,5 +270,50 @@ public class Enemy extends Movable implements Entity {
 	public void setHealth(double health) {
 		this.health = health;
 	}
+
+	@Override
+	public double getX() {
+		return currentSprite.getTranslateX();
+	}
+
+	@Override
+	public double getY() {
+		return currentSprite.getTranslateY();
+	}
+
+	@Override
+	public void setX(double x) {
+		currentSprite.setTranslateX(x);
+	}
+
+	@Override
+	public void setY(double y) {
+		currentSprite.setTranslateY(y);
+	}
+
+	@Override
+	public double getWidth() {
+		return DEFAULT_WIDTH;
+	}
+	@Override
+	public double getHeight() {
+		return DEFAULT_HEIGHT;
+	}
+	
+	// For Debugging
+	
+	// Used for debugging distance from entity.
+	private void debugMinDistance(Double[] allDistances) {
+		String[] directions = { "RIGHT", "LEFT", "UP", "DOWN" };
+		for (int i = 0; i < allDistances.length; ++i) {
+			System.out.print(directions[i] + "=" + allDistances[i] + ",");
+		}
+		System.out.println();
+	}
+	
+	private void debugXYCoordinates() {
+		System.out.printf("Enemy() : x = %.1f, y = %.1f\n", this.getX(), this.getY());
+	}
+	
 	
 }

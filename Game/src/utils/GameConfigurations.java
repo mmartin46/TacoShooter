@@ -7,9 +7,11 @@ public class GameConfigurations {
 	public static int NUM_MILLIS_DELAY = 16;
 	
 	public static int DEFAULT_COIN_ADDITION = 1;
+	public static double DEFAULT_PLAYER_HEALTH = 100.0;
 	
 	public static int ADJUSTED_WIDTH = SCREEN_WIDTH;
 	public static int ADJUSTED_HEIGHT = SCREEN_HEIGHT;
+	
 	
 	public static int doubledScreenWidth() {
 		return GameConfigurations.SCREEN_WIDTH * 2;

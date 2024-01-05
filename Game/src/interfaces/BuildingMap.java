@@ -7,6 +7,11 @@ import javafx.scene.Group;
 import movables.Player;
 import utils.GameConfigurations;
 
+/**
+ * Represents a map
+ * that is created from being parsed
+ * from a CSV-file.
+ */
 public abstract class BuildingMap {
 	public final int GRASS_TILE = 17;
 	public final int NUM_ENEMY_SPRITES = 16;
@@ -16,17 +21,23 @@ public abstract class BuildingMap {
 	public abstract void setupMap();
 	
 
+	// Returns the spritesheet.
 	public Image getSpriteSheetImage(String tileSheetPath) {
 		InputStream spriteSheetInputStream = null;
 		// Try to load the spriteSheet
 		try {
 			
+			// Locate within the folder.
 			spriteSheetInputStream = getClass().getResourceAsStream(tileSheetPath);
 			
+			
+			// If the image isn't found,
+			// throw an exception.
 			if (spriteSheetInputStream == null) {
 				throw new IllegalArgumentException("spriteSheetInputStream(): Invalid path");
 			}
 		} catch (IllegalArgumentException e) {
+			// If an illegal error occurs outside of the path.
 			System.err.println("spriteSheetInputStream(): Error loading tile sheet.");
 		}
 		
@@ -34,6 +45,8 @@ public abstract class BuildingMap {
 		return spriteSheetImage;
 	}
 	
+	// Draws the tiles to the given group,
+	// based on the player's position.
 	public void draw(Group group, Player player) {
 
 		// Renders some tiles at a time.

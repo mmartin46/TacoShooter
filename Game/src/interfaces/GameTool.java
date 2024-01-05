@@ -4,6 +4,10 @@ package interfaces;
 import javafx.scene.Group;
 import javafx.scene.image.ImageView;
 
+/**
+ * Used as a tool for the
+ * game.
+ */
 public interface GameTool {
 	double getX();
 	double getY();

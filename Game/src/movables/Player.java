@@ -16,8 +16,13 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.util.Duration;
+import utils.GameConfigurations;
 
 
+/**
+ * Represents a player with sprites, coordinates,
+ * and collides with tiles.
+ */
 public class Player extends Movable implements Entity {
 	
 	// Constants
@@ -26,9 +31,11 @@ public class Player extends Movable implements Entity {
 	// Player Sprite
 	private int numSprites;
 	
+	
 	// Player Utilities
 	private double health;
 	private double coinsCollected = 0;
+	private boolean playerDead;
 
 	private ArrayList<Attack> bullets;
 	private int currentBulletIndex = 0;
@@ -57,6 +64,7 @@ public class Player extends Movable implements Entity {
 	}
 	
 	public Player(double x, double y, int numSprites) {
+		setDidPlayerDie(true);
 		this.numSprites = numSprites;
 		playerImages = new HashMap<>();
 		setCurrentDirection(Direction.RIGHT);
@@ -66,6 +74,9 @@ public class Player extends Movable implements Entity {
 		initializeBullets();
 	}
 	
+	/* Initializes the array of bullets
+	 that the player can use to shoot.
+	 */
 	private void initializeBullets() {
 		bullets = new ArrayList<Attack>();
 		
@@ -73,7 +84,21 @@ public class Player extends Movable implements Entity {
 			bullets.add(new Attack(this));
 		}
 	}
+	
+	/*
+	 * Resets the coordinates for the player
+	 * to specified x and y coordinates.
+	 */
+	public void resetAll(double x, double y) {
+		setX(x);
+		setY(y);
+		setHealth(GameConfigurations.DEFAULT_PLAYER_HEALTH);
+		setCoinsCollected(0);
+	}
 
+	/*
+	 * Returns the current sprite.
+	 */
 	public ImageView getSprite() {
 		return currentSprite;
 	}
@@ -102,10 +127,16 @@ public class Player extends Movable implements Entity {
 		}
 	}
 	
+	// Time passed until another bullet can be shot.
 	private boolean enoughTimePassedForBullet(long currentTime) {
 		return (currentTime - lastSpacePressed) > bulletDelayMillis;
 	}
 	
+	/*
+	 * Check if there are enough bullets
+	 * to shoot before allowing the
+	 * player to shoot.
+	 */
 	private void allowShotToMove() {
 		if (currentBulletIndex >= NUM_BULLETS) {
 			currentBulletIndex = 0;
@@ -115,6 +146,10 @@ public class Player extends Movable implements Entity {
 		}
 	}
 	
+	/*
+	 * Resets the bullets positions to allow
+	 * for more bullets to be shot.
+	 */
 	private void resetBulletCoordinates() {
 		for (int i = 0; i < NUM_BULLETS; ++i) {
 			Attack currentBullet = bullets.get(i);
@@ -180,14 +215,8 @@ public class Player extends Movable implements Entity {
 		return index >= 12 && index <= 15;
 	}
 	
-	@Override
-	public double getWidth() {
-		return DEFAULT_WIDTH;
-	}
-	@Override
-	public double getHeight() {
-		return DEFAULT_HEIGHT;
-	}
+	
+
 	
 	// Handles horizontal and vertical input.
 	private void handleInput() {
@@ -195,6 +224,10 @@ public class Player extends Movable implements Entity {
 		handleVerticalInput();
 	}
 	
+	/*
+	 * Changes the dx based on where
+	 * the player moves.
+	 */
 	private void handleHorizontalInput() {
 		if (isKeyPressed(KeyCode.LEFT)) {
 			moveLeft(PLAYER_SPEED);
@@ -204,7 +237,11 @@ public class Player extends Movable implements Entity {
 			dx = 0.0;
 		}
 	}
-	
+
+	/*
+	 * Changes the dy based on where
+	 * the player moves.
+	 */
 	private void handleVerticalInput() {
 		if (isKeyPressed(KeyCode.UP)) {
 			moveUp(PLAYER_SPEED);
@@ -215,6 +252,10 @@ public class Player extends Movable implements Entity {
 		}
 	}
 	
+	/*
+	 * Updates the player's position 
+	 * and the player's bullets.
+	 */
 	public void update() {
 		// Checks for keys for player movement.
 		handleInput();
@@ -239,11 +280,13 @@ public class Player extends Movable implements Entity {
 		handleShotMovement();
 	}
 	
+	// Draws the list of bullets.
 	private void drawBullets(Group group) {
 		for (int i = 0; i < NUM_BULLETS; ++i) {
 			bullets.get(i).draw(group);
 		}
 	}
+	// Updates the list of bullets.
 	private void updateBullets() {
 		for (int i = 0; i < NUM_BULLETS; ++i) {
 			bullets.get(i).update();
@@ -255,6 +298,7 @@ public class Player extends Movable implements Entity {
 		return getDX() == 0.0 && getDY() == 0.0;
 	}
 
+	// Draws the player and the bullets.
 	@Override
 	public void draw(Group group) {
 		drawBullets(group);
@@ -289,6 +333,15 @@ public class Player extends Movable implements Entity {
 		currentSprite.setTranslateY(y);
 	}
 	
+	@Override
+	public double getWidth() {
+		return DEFAULT_WIDTH;
+	}
+	@Override
+	public double getHeight() {
+		return DEFAULT_HEIGHT;
+	}
+	
 	
 	@Override
 	public double getHealth() {
@@ -300,36 +353,13 @@ public class Player extends Movable implements Entity {
 		this.health = health;
 	}
 	
-
-	// Update the current direction
-	public void setCurrentDirection(Direction currentDirection) {
-		this.currentDirection = currentDirection;
+	public void setDidPlayerDie(boolean didDie) {
+		playerDead = didDie;
 	}
 	
-	public Direction getCurrentDirection() {
-		return currentDirection;
+	public boolean getDidPlayerDie() {
+		return playerDead;
 	}
-	
-	private void updateToFirstIndex() {
-		List<Image> sprites = playerImages.get(currentDirection);
-		
-		if (sprites != null && !sprites.isEmpty()) {
-			currentSprite.setImage(sprites.get(INITIAL_SPRITE));
-		}
-	}
-	
-	private void updateCurrentSprite() {
-		List<Image> sprites = playerImages.get(currentDirection);
-		if (sprites != null && !sprites.isEmpty()) {
-			int currentSpriteIndex = (int) ((System.currentTimeMillis() / 100) % sprites.size());
-			currentSprite.setImage(sprites.get(currentSpriteIndex));
-		}
-	}
-	
-	public void increaseCoinsCollected(int numCoins) {
-		coinsCollected += numCoins;
-	}
-	
 	
 	@Override
 	public double getDX() {
@@ -366,6 +396,50 @@ public class Player extends Movable implements Entity {
 	public void setCurrentBulletIndex(int currentBulletIndex) {
 		this.currentBulletIndex = currentBulletIndex;
 	}
+	
+	
+	
+	// Sprite Handling
+
+	// Update the current direction
+	public void setCurrentDirection(Direction currentDirection) {
+		this.currentDirection = currentDirection;
+	}
+	
+	public Direction getCurrentDirection() {
+		return currentDirection;
+	}
+	
+	/**
+	 *  Make the current sprite
+	 *	the initial sprite of the list of sprites.
+	 */
+	private void updateToFirstIndex() {
+		List<Image> sprites = playerImages.get(currentDirection);
+		
+		if (sprites != null && !sprites.isEmpty()) {
+			currentSprite.setImage(sprites.get(INITIAL_SPRITE));
+		}
+	}
+	
+	/**
+	 * Updates the current sprite
+	 * based on the time.
+	 */
+	private void updateCurrentSprite() {
+		List<Image> sprites = playerImages.get(currentDirection);
+		if (sprites != null && !sprites.isEmpty()) {
+			int currentSpriteIndex = (int) ((System.currentTimeMillis() / 100) % sprites.size());
+			currentSprite.setImage(sprites.get(currentSpriteIndex));
+		}
+	}
+	
+	public void increaseCoinsCollected(int numCoins) {
+		coinsCollected += numCoins;
+	}
+	
+	
+
 
 	
 

@@ -10,6 +10,10 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import utils.Pair;
 
+/**
+ * Represents an attack that a Player
+ * is able to utilize against an enemy.
+ */
 public class Attack implements GameTool, Entity {
 	
 	private final int OFFSET_X = 7;

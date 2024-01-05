@@ -30,6 +30,11 @@ public class EnemyMap extends BuildingMap {
 		indexEnemyMap = new int[rows][columns];
 	}
 	
+	/**
+	 * 
+	 * @param csvFilePath - represents the CSV File used to locate enemy positions.
+	 * @param tileSheetPath - represents a PNG File for the tile sheet.
+	 */
 	public EnemyMap(String csvFilePath, String tileSheetPath) {
 		tileMapDimensions = new MapDimensions();
 		this.csvFilePath = csvFilePath;
@@ -40,6 +45,13 @@ public class EnemyMap extends BuildingMap {
 		setupMap();
 	}
 
+	/**
+	 * Parses the CSV file into two
+	 * arrays.
+	 * Arrays:
+	 * 2D Array of Enemies
+	 * 2D Array of integer positions.
+	 */
 	@Override
 	public void loadMapFromCSVFile() {
 		int numRows = 0, numColumns = 0;
@@ -84,7 +96,12 @@ public class EnemyMap extends BuildingMap {
 		// Set and load the tiles
 		setupMap();
 	}
-
+	
+	/**
+	 Sets up the enemies
+	 positions based on the locations
+	 of the CSV File.
+	 */
 	@Override
 	public void setupMap() {
 		int x, y;
@@ -111,15 +128,24 @@ public class EnemyMap extends BuildingMap {
 	}
 	
 	
-	
+	/**
+	 * Updates the positions of all the enemies
+	 * based on the player's position and the given tiles.
+	 * @param player
+	 * @param tileMap
+	 */
 	public void update(Player player, Tile[][] tileMap) {
 		int x, y;
 		for (x = 0; x < enemyMap.length; ++x) {
 			for (y = 0; y < enemyMap[0].length; ++y) {
 				if (enemyMap[x][y] != null) {
+					// Update every enemy in the map.
 					enemyMap[x][y].update(player, tileMap);
+					// Check for collisions with a bullet.
 					enemyMap[x][y].collisionWithBullet(player.getBullets());
 					
+					// If the enemy needs to be removed
+					// based on specific boolean checks. Remove the enemy.
 					if (shouldRemoveEnemy(enemyMap[x][y])) {
 						enemyMap[x][y] = null;
 					}
@@ -128,6 +154,7 @@ public class EnemyMap extends BuildingMap {
 		}
 	}
 	
+	// Remove the enemy if the health is empty.
 	private boolean shouldRemoveEnemy(Enemy enemy) {
 		return enemy.getHealth() <= NO_ENEMY_HEALTH;
 	}
@@ -135,6 +162,7 @@ public class EnemyMap extends BuildingMap {
 	
 	
 	
+	// Draws all the enemies within the map.
 	@Override
 	public void draw(Group group, Player player) {
 		int x, y;
@@ -147,6 +175,10 @@ public class EnemyMap extends BuildingMap {
 		}
 	}
 	
+	/*
+	 * Draws the enemies based on the position
+	 * of the camera coordinates given.
+	 */
 	@Override
 	public void lazyDraw(Group group, int cameraX, int cameraY, int screenWidth, int screenHeight) {
 		int camStartX = (int) Math.max(0,  cameraX / TILE_SIZE);
@@ -159,6 +191,8 @@ public class EnemyMap extends BuildingMap {
 		for (int x = camStartX; x < camEndX; ++x) {
 			for (int y = camStartY; y < camEndY; ++y) {
 				Enemy currentEnemy = enemyMap[x][y];
+				// If the enemy is within the given
+				// coordinates allow the enemy to be drawn.
 				if (currentEnemy != null) {
 					currentEnemy.draw(group);
 				}

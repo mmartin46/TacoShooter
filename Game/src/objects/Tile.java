@@ -5,6 +5,11 @@ import javafx.scene.Group;
 import javafx.scene.image.ImageView;
 import states.TileType;
 
+
+/**
+ * The Tile can be used for colliding
+ * or non-colliding.
+ */
 public class Tile implements Entity {
 	
 	private final int INVISIBLE_INDEX = -1;
@@ -81,10 +86,13 @@ public class Tile implements Entity {
 		
 	}
 	
+	// Set if the tile should be drawn
+	// to the screen or not.
 	public void setVisibility(boolean visibility) {
 		this.allowVisibility = visibility;
 	}
 	
+	// Check the visibility of the tile.
 	public boolean getVisibility() {
 		return allowVisibility;
 	}

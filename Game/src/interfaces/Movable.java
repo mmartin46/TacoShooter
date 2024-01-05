@@ -1,7 +1,10 @@
 package interfaces;
 
 
-
+/**
+ * Represents an object that
+ * is allowed to move around.
+ */
 public abstract class Movable {
 	public double dx, dy;
 	public final double DEFAULT_HEALTH = 100.0;

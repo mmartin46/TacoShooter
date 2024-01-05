@@ -9,6 +9,12 @@ import javafx.scene.Group;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+/**
+ * Used for the player to see how
+ * much health the enemy has.
+ * The class is used in composition with the
+ * enemy.
+ */
 public class HealthBar implements GameTool {
 	
 	private final int DISTANCE_FROM_ENEMY = 15;

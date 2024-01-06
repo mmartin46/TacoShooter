@@ -16,7 +16,7 @@ public class Header {
 	private Player player;
 	
 	private String headerSentence;
-	private final int DEFAULT_FONT_SIZE = 20;
+	private final int DEFAULT_FONT_SIZE = 14; 
 	
 	private final int DEFAULT_HEADER_X = 10;
 	private final int DEFAULT_HEADER_Y = 20;
@@ -47,7 +47,7 @@ public class Header {
 	}
 	
 	private Font loadFont(String fontPath, int fontSize) {
-		try (InputStream iStream = getClass().getClassLoader().getResourceAsStream(fontPath)) {
+		try (InputStream iStream = getClass().getResourceAsStream(fontPath)) {
 			return Font.loadFont(iStream, fontSize);
 		} catch (Exception e) {
 			// Couldn't load the font.
@@ -67,7 +67,7 @@ public class Header {
 	
 	private void updateFontText() {
 		headerSentence = "Player x" + (int) player.getHealth();
-		headerSentence += "\tCoins x" + (int) player.getCoinsCollected();
+		headerSentence += "      Coins x" + (int) player.getCoinsCollected();
 		this.textGraphic.setText(headerSentence);
 	}
 	

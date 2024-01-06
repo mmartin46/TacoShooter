@@ -6,6 +6,7 @@ import javafx.util.Duration;
 import utils.Game;
 import utils.GameConfigurations;
 import utils.Header;
+import utils.PauseScreen;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
@@ -25,7 +26,7 @@ public class Main extends Application {
 	private Group gameGroup;
 	private Header header;
 	private Scene scene;
-	
+	private PauseScreen pauseScreen;
 	
 	// Check for pause
 	private long lastTimePauseWasPressed;
@@ -65,6 +66,11 @@ public class Main extends Application {
 		initializeGroups();
 		game = new Game(scene);
 		initializeHeader();
+		initializePauseScreen();
+	}
+	
+	private void initializePauseScreen() {
+		pauseScreen = new PauseScreen(game.getAllowGameRun());
 	}
 	
 	private void initializeInputManager() {
@@ -110,12 +116,15 @@ public class Main extends Application {
 		
 		header.update();
 		game.update();
+		pauseScreen.update();
+		
 		draw();
 	}
 	
 	private void draw() {
 		header.draw(headerGroup);
 		game.draw(gameGroup);
+		pauseScreen.draw(headerGroup, game.getAllowGameRun());
 	}
 	
 	public static void main(String[] args) {

@@ -83,6 +83,7 @@ public class Game {
 	 *  map based on CSV files.
 	 */
 	private void initializeLayers() {
+		
 		layers.clear();
 		initializeFilePaths();
 

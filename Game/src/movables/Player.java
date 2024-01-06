@@ -41,7 +41,7 @@ public class Player extends Movable implements Entity {
 
 	private ArrayList<Attack> bullets;
 	private int currentBulletIndex = 0;
-	private final int NUM_BULLETS = 50;
+	private final int NUM_BULLETS = 10;
 
 	// Timer
 	private long lastSpacePressed = 0;

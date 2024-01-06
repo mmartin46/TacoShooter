@@ -12,6 +12,7 @@ public class GameConfigurations {
 	public static int ADJUSTED_WIDTH = SCREEN_WIDTH;
 	public static int ADJUSTED_HEIGHT = SCREEN_HEIGHT;
 	
+	public static int DEFAULT_SOUND_VOLUME = 20;
 	
 	public static int doubledScreenWidth() {
 		return GameConfigurations.SCREEN_WIDTH * 2;

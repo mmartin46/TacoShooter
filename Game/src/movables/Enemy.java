@@ -13,6 +13,7 @@ import javafx.scene.Group;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import objects.Tile;
+import sounds.SoundManager;
 
 /**
  * Represents an enemy that is used against
@@ -41,6 +42,9 @@ public class Enemy extends Movable implements Entity {
 		this.numSprites = numSprites;
 		enemyImages = new HashMap<>();
 		initializeEnemy(x, y);
+		
+		// Sound initialization
+		soundManager = new SoundManager();
 	}
 	
 	private void initalizeEnemyCoordinates(double x, double y) {
@@ -177,6 +181,9 @@ public class Enemy extends Movable implements Entity {
 		for (Attack bullet : bullets) {
 			if (Collisions.playerBlockCollision(this, bullet, Collisions.PASS_THORUGH_ENTITY) &&
 				bullet.getAllowShot()) {
+				
+				soundManager.playSound(SoundFilePaths.enemyHitFilePath,
+										SoundFilePaths.LOW_VOLUME);
 				
 				setHealth(getHealth() - 1);
 			}

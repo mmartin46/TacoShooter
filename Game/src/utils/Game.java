@@ -11,6 +11,7 @@ import javafx.scene.Scene;
 import movables.Enemy;
 import movables.Player;
 import objects.Tile;
+import sounds.SoundManager;
 
 public class Game {
 	
@@ -32,6 +33,9 @@ public class Game {
 	private Player player;
 	private ArrayList<TileMap> layers;
 	private EnemyMap enemyLayer;
+	
+	private SoundManager musicManager;
+	private SoundManager soundManager;
 	
 	private ArrayList<String> filePaths;
 	
@@ -67,6 +71,11 @@ public class Game {
 		initializeLayers();
 		initializePlayer();
 		initializeInputManager();
+	}
+	
+	private void intializeSoundManagers() {
+		musicManager = new SoundManager();
+		soundManager = new SoundManager();
 	}
 	
 	/*
@@ -177,12 +186,17 @@ public class Game {
 				// If the player collided with a coin.
 				if (currentCoin != null) {
 					if (currentCoin.getIndex() == TileMap.COIN_VALUE && Collisions.playerBlockCollision(player, currentCoin, Collisions.PASS_THORUGH_ENTITY)) {
+						playCoinSound();
 						currentCoin.makeTileInvisible();
 						player.increaseCoinsCollected(GameConfigurations.DEFAULT_COIN_ADDITION);
 					}
 				}
 			}
 		}
+	}
+	
+	private void playCoinSound() {
+		player.soundManager.playSound("soundfiles/coin_collect.wav", 20.0);
 	}
 	
 	

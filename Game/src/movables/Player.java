@@ -16,6 +16,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.util.Duration;
+import sounds.SoundManager;
 import utils.GameConfigurations;
 
 
@@ -31,6 +32,7 @@ public class Player extends Movable implements Entity {
 	// Player Sprite
 	private int numSprites;
 	
+
 	
 	// Player Utilities
 	private double health;
@@ -72,7 +74,12 @@ public class Player extends Movable implements Entity {
 		
 		// Attacks
 		initializeBullets();
+		
+		// Sounds
+		soundManager = new SoundManager();
 	}
+	
+	
 	
 	/* Initializes the array of bullets
 	 that the player can use to shoot.
@@ -122,6 +129,9 @@ public class Player extends Movable implements Entity {
 		if (isKeyPressed(KeyCode.SPACE) &&
 			enoughTimePassedForBullet(currentTime)) {
 			
+			soundManager.playSound(SoundFilePaths.shotFilePath,
+								   SoundFilePaths.DEFAULT_VOLUME);
+
 			allowShotToMove();
 			lastSpacePressed = currentTime;
 		}

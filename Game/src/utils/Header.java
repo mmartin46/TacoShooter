@@ -1,18 +1,15 @@
 package utils;
 
-import java.io.InputStream;
 
+import interfaces.OnScreenSetting;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 
 import javafx.scene.text.Text;
 import movables.Player;
 
-public class Header {
+public class Header extends OnScreenSetting {
 	
-	private Text textGraphic;
-	private Font textFont;
 	private Player player;
 	
 	private String headerSentence;
@@ -20,7 +17,6 @@ public class Header {
 	
 	private final int DEFAULT_HEADER_X = 10;
 	private final int DEFAULT_HEADER_Y = 20;
-	private final String DEFAULT_FONT = "Arial";
 	
 	public Header(Player player) {
 		this.player = player;
@@ -46,31 +42,16 @@ public class Header {
 						DEFAULT_HEADER_Y);
 	}
 	
-	private Font loadFont(String fontPath, int fontSize) {
-		try (InputStream iStream = getClass().getResourceAsStream(fontPath)) {
-			return Font.loadFont(iStream, fontSize);
-		} catch (Exception e) {
-			// Couldn't load the font.
-			System.err.println("loadFont(): Couldn't find font.");
-			return Font.font(DEFAULT_FONT, fontSize);
-		}
-	}
+
 	
-	
-	private void setupFontGraphic(int x, int y) {
-		textGraphic.setLayoutX(x);
-		textGraphic.setLayoutY(y);
-		
-		updateFontText();
-	}
-	
-	
-	private void updateFontText() {
+	@Override	
+	public void updateFontText() {
 		headerSentence = "Player x" + (int) player.getHealth();
 		headerSentence += "      Coins x" + (int) player.getCoinsCollected();
 		this.textGraphic.setText(headerSentence);
 	}
 	
+	@Override
 	public void update() {
 		updateFontText();
 	}

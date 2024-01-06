@@ -15,18 +15,17 @@ import sounds.SoundManager;
 
 public class Game {
 	
-	private final int MOVABLE_LAYER = 0;
-	private final int NONMOVABLE_LAYER = 1;
-	private final int COIN_LAYER = 2;
-	private final int ENEMY_LAYER = 3;
+	static class Layers {
+		protected static final int MOVABLE_LAYER = 0;
+		protected static final int NONMOVABLE_LAYER = 1;
+		protected static final int COIN_LAYER = 2;
+		protected static final int ENEMY_LAYER = 3;
+	}
+	
 	
 	private final int DEFAULT_PLAYER_X = 800;
 	private final int DEFAULT_PLAYER_Y = 500;
 	private final int NUM_PLAYER_SPRITES = 31;
-	private final int NUM_ENEMY_SPRITES = 16;
-
-	private final int GAME_SCALE = 2;
-	
 	
 	private Scene scene;
 	private InputManager inputManager;
@@ -38,9 +37,7 @@ public class Game {
 	private SoundManager soundManager;
 	
 	private ArrayList<String> filePaths;
-	
-	private Enemy enemy;
-	
+		
 	private boolean allowGameRun;
 
 	
@@ -71,6 +68,7 @@ public class Game {
 		initializeLayers();
 		initializePlayer();
 		initializeInputManager();
+		intializeSoundManagers();
 	}
 	
 	private void intializeSoundManagers() {
@@ -89,10 +87,10 @@ public class Game {
 
 		String tileSheetPath = "mapfiles/maptilesheet.png";
 
-		layers.add(new TileMap(filePaths.get(MOVABLE_LAYER), tileSheetPath));
-		layers.add(new TileMap(filePaths.get(NONMOVABLE_LAYER), tileSheetPath));
-		layers.add(new TileMap(filePaths.get(COIN_LAYER), tileSheetPath));
-		enemyLayer = new EnemyMap(filePaths.get(ENEMY_LAYER), tileSheetPath);
+		layers.add(new TileMap(filePaths.get(Layers.MOVABLE_LAYER), tileSheetPath));
+		layers.add(new TileMap(filePaths.get(Layers.NONMOVABLE_LAYER), tileSheetPath));
+		layers.add(new TileMap(filePaths.get(Layers.COIN_LAYER), tileSheetPath));
+		enemyLayer = new EnemyMap(filePaths.get(Layers.ENEMY_LAYER), tileSheetPath);
 	}
 	
 	private void initializeFilePaths() {
@@ -134,7 +132,7 @@ public class Game {
 	// Updates the game
 	public void update() {
 		if (getAllowGameRun()) {
-			enemyLayer.update(player, layers.get(NONMOVABLE_LAYER).getTileMap());
+			enemyLayer.update(player, layers.get(Layers.NONMOVABLE_LAYER).getTileMap());
 			player.update();
 			
 			checkForTileCollisions();
@@ -166,8 +164,8 @@ public class Game {
 	
 	private void checkForTileCollisions() {
 		int x, y;
-		Tile[][] tileMap = layers.get(NONMOVABLE_LAYER).getTileMap();
-		Tile[][] coinMap = layers.get(COIN_LAYER).getTileMap();
+		Tile[][] tileMap = layers.get(Layers.NONMOVABLE_LAYER).getTileMap();
+		Tile[][] coinMap = layers.get(Layers.COIN_LAYER).getTileMap();
 		Tile currentTile, currentCoin;
 		
 		for (x = 0; x < tileMap.length; ++x) {

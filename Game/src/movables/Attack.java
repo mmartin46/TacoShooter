@@ -55,6 +55,10 @@ public class Attack implements GameTool, Entity {
 			initializeCoordinates();
 			lastDirection = matchedEntity.getCurrentDirection();
 		} else {
+			if (lastDirection == null) {
+				return;
+			}
+			
 			switch (lastDirection) {
 				case LEFT:
 					setX(getX() - 1);

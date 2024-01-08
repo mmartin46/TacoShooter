@@ -44,9 +44,14 @@ public class Game {
 	private int numOfCoinsNeeded = 200;
 	private int numEnemiesToBeat = 100;
 	
-	private int currentLevel = 2;
+	private int currentLevel = 1;
 	private int currentWorld = 1;
 	
+	private int gameTimer = 0;
+		
+	public int getGameTimer() {
+		return gameTimer;
+	}
 	
 	public int getNumOfCoinsNeeded() {
 		return numOfCoinsNeeded;
@@ -154,6 +159,7 @@ public class Game {
 			checkForTileCollisions();
 			checkForPlayerDeath();
 			checkToChangeLevel();
+			++gameTimer;
 		}
 	}
 	

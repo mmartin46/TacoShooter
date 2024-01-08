@@ -16,19 +16,21 @@ public class Header extends OnScreenSetting {
 	
 	private int coinsNeeded;
 	private int enemiesNeeded;
+	private int gameTimer;
 	
 	private final int DEFAULT_FONT_SIZE = 14; 
 	
 	private final int DEFAULT_HEADER_X = 10;
 	private final int DEFAULT_HEADER_Y = 20;
 	
-	public Header(Player player, int coinsNeeded, int enemiesNeeded) {
+	public Header(Player player, int coinsNeeded, int enemiesNeeded, int gameTimer) {
 		this.player = player;
 		this.textGraphic = new Text();
 		this.textFont = loadFont("fonts/alagard.ttf", DEFAULT_FONT_SIZE);
 		
 		this.coinsNeeded = coinsNeeded;
 		this.enemiesNeeded = enemiesNeeded;
+		this.gameTimer = gameTimer;
 		
 		textGraphic.setFont(this.textFont);
 		textGraphic.setFill(Color.LIGHTBLUE);
@@ -37,13 +39,14 @@ public class Header extends OnScreenSetting {
 				DEFAULT_HEADER_Y);
 	}
 	
-	public Header(Player player, int fontSize, int coinsNeeded, int enemiesNeeded) {
+	public Header(Player player, int fontSize, int coinsNeeded, int enemiesNeeded, int gameTimer) {
 		this.player = player;
 		this.textGraphic = new Text();
 		this.textFont = loadFont("fonts/alagard.ttf", fontSize);
 		
 		this.coinsNeeded = coinsNeeded;
 		this.enemiesNeeded = enemiesNeeded;
+		this.gameTimer = gameTimer;
 		
 		textGraphic.setFont(this.textFont);
 		textGraphic.setFill(Color.LIGHTBLUE);
@@ -61,6 +64,7 @@ public class Header extends OnScreenSetting {
 							coinsNeeded;
 		
 		headerSentence += "	  Enemies x" + player.getNumOfEnemiesBeat() + "/" + enemiesNeeded;
+		headerSentence += "   Time: " + gameTimer;
 		this.textGraphic.setText(headerSentence);
 	}
 	

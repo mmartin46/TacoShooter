@@ -37,6 +37,8 @@ public class Player extends Movable implements Entity {
 	// Player Utilities
 	private double health;
 	private double coinsCollected = 0;
+	private int numOfEnemiesBeat = 0;
+	
 	private boolean playerDead;
 
 	private ArrayList<Attack> bullets;
@@ -101,6 +103,7 @@ public class Player extends Movable implements Entity {
 		setY(y);
 		setHealth(GameConfigurations.DEFAULT_PLAYER_HEALTH);
 		setCoinsCollected(0);
+		setNumOfEnemiesBeat(0);
 	}
 
 	/*
@@ -446,6 +449,14 @@ public class Player extends Movable implements Entity {
 	
 	public void increaseCoinsCollected(int numCoins) {
 		coinsCollected += numCoins;
+	}
+
+	public int getNumOfEnemiesBeat() {
+		return numOfEnemiesBeat;
+	}
+
+	public void setNumOfEnemiesBeat(int numOfEnemiesBeat) {
+		this.numOfEnemiesBeat = numOfEnemiesBeat;
 	}
 	
 	

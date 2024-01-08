@@ -32,11 +32,21 @@ public class Enemy extends Movable implements Entity {
 	HashMap<Direction, List<Image>> enemyImages;
 	private HealthBar healthBar;
 	
+	private boolean isAlive;
+	
 	// Player Direction
 	private Direction currentDirection;
 	
 	private final double ENEMY_SPEED = 0.4;
 
+	public boolean getIsAlive() {
+		return isAlive;
+	}
+	
+	public void setIsAlive(boolean isAlive) {
+		this.isAlive = isAlive;
+	}
+	
 
 	public Enemy(int x, int y, int numSprites) {
 		this.numSprites = numSprites;
@@ -53,6 +63,7 @@ public class Enemy extends Movable implements Entity {
 	}
 	
 	private void initializeEnemy(double x, double y) {
+		setIsAlive(true);
 		initializeDirections();
 		initializeAllSprites();
 
@@ -142,7 +153,7 @@ public class Enemy extends Movable implements Entity {
 	 * @param entity
 	 * @param tileMap
 	 */
-	public void update(Entity entity, Tile[][] tileMap) {
+	public void update(Player entity, Tile[][] tileMap) {
 		setDirection(entity);
 		
 				
@@ -156,7 +167,7 @@ public class Enemy extends Movable implements Entity {
 	}
 	
 	// Handles collision with a tile.
-	private void collisionWithTile(Entity entity, Tile[][] tileMap) {
+	private void collisionWithTile(Player entity, Tile[][] tileMap) {
 		int x, y;
 		for (x = 0; x < tileMap.length; ++x) {
 			for (y = 0; y < tileMap[0].length; ++y) {
@@ -177,15 +188,28 @@ public class Enemy extends Movable implements Entity {
 	}
 	
 	// Handles collision with a bullet.
-	public void collisionWithBullet(ArrayList<Attack> bullets) {
+	public void collisionWithBullet(ArrayList<Attack> bullets, Player entity) {
 		for (Attack bullet : bullets) {
 			if (Collisions.playerBlockCollision(this, bullet, Collisions.PASS_THORUGH_ENTITY) &&
 				bullet.getAllowShot()) {
+				
 				
 				soundManager.playSound(SoundFilePaths.enemyHitFilePath,
 										SoundFilePaths.LOW_VOLUME);
 				
 				setHealth(getHealth() - 1);
+				checkForEnemyDeath(entity);
+			}
+		}
+	}
+	
+	public void checkForEnemyDeath(Player entity) {
+		if (getHealth() <= 0.0) {
+			if (getIsAlive()) {
+				entity.setNumOfEnemiesBeat(
+				entity.getNumOfEnemiesBeat() + 1
+				);
+				setIsAlive(false);
 			}
 		}
 	}

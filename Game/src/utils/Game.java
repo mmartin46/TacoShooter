@@ -39,8 +39,23 @@ public class Game {
 	private ArrayList<String> filePaths;
 		
 	private boolean allowGameRun;
-
 	
+	// Temporary
+	private int numOfCoinsNeeded = 200;
+	private int numEnemiesToBeat = 100;
+	
+	private int currentLevel = 2;
+	private int currentWorld = 1;
+	
+	
+	public int getNumOfCoinsNeeded() {
+		return numOfCoinsNeeded;
+	}
+
+	public void setNumOfCoinsNeeded(int numOfCoinsNeeded) {
+		this.numOfCoinsNeeded = numOfCoinsNeeded;
+	}
+
 	public Game(Scene scene) {
 		this.scene = scene;
 		
@@ -69,6 +84,7 @@ public class Game {
 		initializePlayer();
 		initializeInputManager();
 		intializeSoundManagers();
+		soundManager.playSound("soundfiles/track_1.wav", 20.0);
 	}
 	
 	private void intializeSoundManagers() {
@@ -85,7 +101,7 @@ public class Game {
 		layers.clear();
 		initializeFilePaths();
 
-		String tileSheetPath = "mapfiles/maptilesheet.png";
+		String tileSheetPath = "mapfiles/maptilesheet" + currentLevel + ".png";
 
 		layers.add(new TileMap(filePaths.get(Layers.MOVABLE_LAYER), tileSheetPath));
 		layers.add(new TileMap(filePaths.get(Layers.NONMOVABLE_LAYER), tileSheetPath));
@@ -95,10 +111,10 @@ public class Game {
 	
 	private void initializeFilePaths() {
 		filePaths = new ArrayList<String>();
-		addToFilePaths("mapfiles/world_1_1_walkable.csv");
-		addToFilePaths("mapfiles/world_1_1_nonwalkable.csv");
-		addToFilePaths("mapfiles/world_1_1_tacos.csv");
-		addToFilePaths("mapfiles/world_1_1_enemies.csv");
+		addToFilePaths("mapfiles/world_" + currentWorld + "_" + currentLevel + "_walkable.csv");
+		addToFilePaths("mapfiles/world_" + currentWorld + "_" + currentLevel + "_nonwalkable.csv");
+		addToFilePaths("mapfiles/world_" + currentWorld + "_" + currentLevel + "_tacos.csv");
+		addToFilePaths("mapfiles/world_" + currentWorld + "_" + currentLevel + "_enemies.csv");
 	}
 	
 	// Add to the file paths for the maps
@@ -137,6 +153,7 @@ public class Game {
 			
 			checkForTileCollisions();
 			checkForPlayerDeath();
+			checkToChangeLevel();
 		}
 	}
 	
@@ -219,15 +236,46 @@ public class Game {
 	}
 	
 	private void checkForPlayerDeath() {
-		if (player.getHealth() <= 0.0) {
+		if (player.getHealth() <= 1.0) {
 			player.setDidPlayerDie(true);
 			handlePlayerDeath();
 		}
 	}
 	
+	private boolean enoughCoinsCollected() {
+		if (player.getCoinsCollected() >= numOfCoinsNeeded) {
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean enoughEnemiesBeat() {
+		if (player.getNumOfEnemiesBeat() >= numEnemiesToBeat) {
+			return true;
+		}
+		return false;
+	}
+	
+	private void checkToChangeLevel() {
+		if (enoughCoinsCollected() && enoughEnemiesBeat()) {
+			currentLevel++;
+			initializeLayers();
+			player.resetAll(DEFAULT_PLAYER_X, DEFAULT_PLAYER_X);
+		}
+	}
+	
+	
 	private void handlePlayerDeath() {
 		initializeLayers();
 		player.resetAll(DEFAULT_PLAYER_X, DEFAULT_PLAYER_Y);
+	}
+
+	public int getNumEnemiesToBeat() {
+		return numEnemiesToBeat;
+	}
+
+	public void setNumEnemiesToBeat(int numEnemiesToBeat) {
+		this.numEnemiesToBeat = numEnemiesToBeat;
 	}
 
 	

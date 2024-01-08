@@ -103,7 +103,8 @@ public class Main extends Application {
 	}
 	
 	private void initializeHeader() {
-		header = new Header(game.getPlayer());
+		header = new Header(game.getPlayer(), game.getNumOfCoinsNeeded(),
+							game.getNumEnemiesToBeat());
 		if (game == null) {
 			throw new IllegalArgumentException("initializeHeader(): Game wasn't inititalized");
 		}

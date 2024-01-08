@@ -142,7 +142,7 @@ public class EnemyMap extends BuildingMap {
 					// Update every enemy in the map.
 					enemyMap[x][y].update(player, tileMap);
 					// Check for collisions with a bullet.
-					enemyMap[x][y].collisionWithBullet(player.getBullets());
+					enemyMap[x][y].collisionWithBullet(player.getBullets(), player);
 					
 					// If the enemy needs to be removed
 					// based on specific boolean checks. Remove the enemy.

@@ -27,6 +27,10 @@ public class SoundManager {
 		soundMediaPlayer.play();
 	}
 	
+	public boolean isSoundAllocated() {
+		return soundMediaPlayer != null;
+	}
+	
 	public void stopSound() {
 		soundMediaPlayer.stop();
 	}

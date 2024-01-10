@@ -3,6 +3,7 @@ package application;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import javafx.beans.Observable;
 import utils.Game;
 import utils.GameConfigurations;
 import utils.Header;
@@ -68,6 +69,8 @@ public class Main extends Application {
 		initializeHeader();
 		initializePauseScreen();
 	}
+	
+	
 	
 	private void initializePauseScreen() {
 		pauseScreen = new PauseScreen(game.getAllowGameRun());

@@ -33,7 +33,6 @@ public class Game {
 	private ArrayList<TileMap> layers;
 	private EnemyMap enemyLayer;
 	
-	private SoundManager musicManager;
 	private SoundManager soundManager;
 	
 	private ArrayList<String> filePaths;
@@ -42,10 +41,12 @@ public class Game {
 	
 	// Temporary
 	private int numOfCoinsNeeded = 200;
-	private int numEnemiesToBeat = 100;
+	private int numEnemiesToBeat = 10;
 	
 	private int currentLevel = 1;
 	private int currentWorld = 1;
+	private final int NUM_LEVELS = 4;
+
 	
 	private int gameTimer = 0;
 		
@@ -89,11 +90,10 @@ public class Game {
 		initializePlayer();
 		initializeInputManager();
 		intializeSoundManagers();
-		soundManager.playSound("soundfiles/track_1.wav", 20.0);
+		playMusic();
 	}
 	
 	private void intializeSoundManagers() {
-		musicManager = new SoundManager();
 		soundManager = new SoundManager();
 	}
 	
@@ -152,6 +152,10 @@ public class Game {
 	
 	// Updates the game
 	public void update() {
+		if (currentLevel > NUM_LEVELS) {
+			System.exit(0);
+		}		
+
 		if (getAllowGameRun()) {
 			enemyLayer.update(player, layers.get(Layers.NONMOVABLE_LAYER).getTileMap());
 			player.update();
@@ -263,11 +267,21 @@ public class Game {
 	}
 	
 	private void checkToChangeLevel() {
+
+		
 		if (enoughCoinsCollected() && enoughEnemiesBeat()) {
 			currentLevel++;
 			initializeLayers();
+			playMusic();
 			player.resetAll(DEFAULT_PLAYER_X, DEFAULT_PLAYER_X);
 		}
+	}
+	
+	private void playMusic() {
+		if (soundManager.isSoundAllocated()) {
+			soundManager.stopSound();
+		}
+		soundManager.playSound("soundfiles/track_1.wav", 20.0);
 	}
 	
 	

@@ -3,6 +3,7 @@ package application;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import screens.MainScreen;
 import javafx.beans.Observable;
 import utils.Game;
 import utils.GameConfigurations;
@@ -13,21 +14,37 @@ import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.animation.Timeline;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+
 import input.InputManager;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 
+enum WhichGroup {
+	SCREEN,
+	HEADER,
+	GAME
+}
 
 public class Main extends Application {
 	
 	
 	private Pane rootPane;
 	private Game game;
-	private Group headerGroup;
-	private Group gameGroup;
+	
+
+	
+	private HashMap<WhichGroup, Group> groups;
+	
+	
 	private Header header;
 	private Scene scene;
 	private PauseScreen pauseScreen;
+	private MainScreen mainScreen;
 	
 	// Check for pause
 	private long lastTimePauseWasPressed;
@@ -49,7 +66,6 @@ public class Main extends Application {
 		
 		initializeGame(scene);
 		
-		//primaryStage.setResizable(false);
 		primaryStage.show();
 		
 		intitalizeGameLoop();
@@ -68,12 +84,17 @@ public class Main extends Application {
 		game = new Game(scene);
 		initializeHeader();
 		initializePauseScreen();
+		intializeMainScreen();
 	}
 	
 	
 	
 	private void initializePauseScreen() {
 		pauseScreen = new PauseScreen(game.getAllowGameRun());
+	}
+	
+	private void intializeMainScreen() {
+		mainScreen = new MainScreen(game);
 	}
 	
 	private void initializeInputManager() {
@@ -99,10 +120,16 @@ public class Main extends Application {
 	}
 	
 	private void initializeGroups() {
-		headerGroup = new Group();
-		gameGroup = new Group();
-		rootPane.getChildren().add(gameGroup);
-		rootPane.getChildren().add(headerGroup);
+		groups = new HashMap<>();
+		
+		groups.put(WhichGroup.SCREEN, new Group());
+		groups.put(WhichGroup.HEADER, new Group());
+		groups.put(WhichGroup.GAME, new Group());
+		
+		
+		rootPane.getChildren().add(groups.get(WhichGroup.GAME));
+		rootPane.getChildren().add(groups.get(WhichGroup.HEADER));
+		rootPane.getChildren().add(groups.get(WhichGroup.SCREEN));
 	}
 	
 	private void initializeHeader() {
@@ -126,9 +153,10 @@ public class Main extends Application {
 	}
 	
 	private void draw() {
-		header.draw(headerGroup);
-		game.draw(gameGroup);
-		pauseScreen.draw(headerGroup, game.getAllowGameRun());
+		header.draw(groups.get(WhichGroup.HEADER));
+		game.draw(groups.get(WhichGroup.GAME));
+		pauseScreen.draw(groups.get(WhichGroup.HEADER), game.getAllowGameRun());
+		mainScreen.draw(groups.get(WhichGroup.SCREEN));
 	}
 	
 	public static void main(String[] args) {
